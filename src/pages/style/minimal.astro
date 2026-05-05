@@ -1,0 +1,88 @@
+---
+import "~/styles/global.css";
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Style preview — Minimal Editorial</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@300;400;500;600;700&display=swap"
+    />
+    <style>
+      html, body {
+        background: #faf7f2;
+        color: #1c1c1c;
+        font-family: "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+      }
+      body::before { display: none; }
+      .display { font-family: "Fraunces", ui-serif, Georgia, serif; letter-spacing: -0.01em; }
+      .accent { color: #0f5132; }
+      .rule { height: 1px; background: #1c1c1c; opacity: 0.15; border: 0; }
+      .num { font-family: "Fraunces", serif; font-weight: 300; font-size: 5rem; line-height: 1; color: #0f5132; }
+      .chip {
+        display: inline-grid;
+        place-items: center;
+        width: 96px; height: 140px;
+        background: #fff;
+        border: 1px solid #1c1c1c1f;
+        border-radius: 12px;
+        font-family: "Fraunces", serif;
+        font-size: 2rem;
+        color: #1c1c1c;
+      }
+      .chip.red { color: #b1261f; }
+      a { color: #0f5132; }
+    </style>
+  </head>
+  <body>
+    <header style="border-bottom:1px solid #1c1c1c1f; background:#faf7f2;">
+      <nav style="max-width:1100px;margin:0 auto;padding:1.25rem 1.5rem;display:flex;justify-content:space-between;align-items:center;">
+        <a href="/" class="display" style="font-size:1.25rem;letter-spacing:0.18em;text-decoration:none;color:#1c1c1c;">CAMBIO</a>
+        <div style="display:flex;gap:1.5rem;font-size:0.95rem;">
+          <a href="/style/luxe">← Compare Luxe</a>
+          <a href="/">Home</a>
+        </div>
+      </nav>
+    </header>
+    <main style="max-width:780px;margin:0 auto;padding:5rem 1.5rem;">
+      <div style="text-transform:uppercase;letter-spacing:0.32em;font-size:0.72rem;color:#0f5132;margin-bottom:1.5rem;">Style B</div>
+      <h1 class="display" style="font-size:4rem;line-height:1.05;font-weight:400;margin:0 0 0.75rem;">Modern Editorial Minimal</h1>
+      <p style="font-size:1.1rem;line-height:1.7;color:#3a3a3a;max-width:60ch;">A cream page, deep green accent, generous whitespace, oversized serif numerals. Cambio explained as a beautifully typeset short essay.</p>
+
+      <hr class="rule" style="margin:3rem 0;" />
+
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:2rem;align-items:center;">
+        <span class="num">I</span>
+        <div>
+          <h2 class="display" style="font-size:1.75rem;margin:0 0 0.5rem;font-weight:500;">Deal four</h2>
+          <p style="margin:0;color:#3a3a3a;line-height:1.7;">Each player gets a 2×2 grid of face-down cards. You may briefly peek at your bottom two before play begins.</p>
+        </div>
+      </div>
+
+      <hr class="rule" style="margin:2.5rem 0;" />
+
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:2rem;align-items:center;">
+        <span class="num">II</span>
+        <div>
+          <h2 class="display" style="font-size:1.75rem;margin:0 0 0.5rem;font-weight:500;">Draw, exchange, discard</h2>
+          <p style="margin:0;color:#3a3a3a;line-height:1.7;">Draw the deck or take the top discard, then swap into your grid to lower your score.</p>
+        </div>
+      </div>
+
+      <hr class="rule" style="margin:3rem 0;" />
+
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+        <div class="chip">A♠</div>
+        <div class="chip red">Q♥</div>
+        <div class="chip">K♣</div>
+        <div class="chip red">7♦</div>
+        <div class="chip">JOKER</div>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,158 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Cinzel", "Playfair Display", ui-serif, Georgia, serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* luxe palette (default) */
+  --color-felt-950: #050b08;
+  --color-felt-900: #0b1410;
+  --color-felt-800: #102019;
+  --color-felt-700: #173025;
+  --color-gold-50: #fbf3dc;
+  --color-gold-200: #ecd596;
+  --color-gold-400: #d4a64a;
+  --color-gold-500: #b8862b;
+  --color-gold-600: #8a611a;
+  --color-ivory: #f4ede1;
+  --color-ivory-dim: #c9c0ae;
+  --color-blood: #b1261f;
+  --color-suit-red: #c0322a;
+  --color-suit-black: #0c1612;
+}
+
+:root {
+  color-scheme: dark;
+  --bg: var(--color-felt-900);
+  --fg: var(--color-ivory);
+  --muted: var(--color-ivory-dim);
+  --accent: var(--color-gold-400);
+  --accent-soft: var(--color-gold-200);
+  --rule: color-mix(in oklab, var(--color-gold-400) 35%, transparent);
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% -10%, color-mix(in oklab, var(--color-gold-400) 14%, transparent), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 100% 110%, color-mix(in oklab, var(--color-felt-700) 80%, transparent), transparent 70%),
+    radial-gradient(ellipse 50% 35% at 0% 100%, color-mix(in oklab, var(--color-felt-700) 60%, transparent), transparent 70%);
+  background-attachment: fixed;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  opacity: 0.55;
+  mix-blend-mode: overlay;
+  z-index: 0;
+}
+
+main, header, footer { position: relative; z-index: 1; }
+
+.font-display { font-family: var(--font-display); letter-spacing: 0.01em; }
+
+.eyebrow {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+  font-size: 0.72rem;
+  color: var(--color-gold-200);
+}
+
+.gold-rule {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--color-gold-400), transparent);
+  border: 0;
+}
+
+.filigree::before, .filigree::after {
+  content: "";
+  display: inline-block;
+  width: 3rem; height: 1px;
+  background: linear-gradient(to right, transparent, var(--color-gold-400));
+  vertical-align: middle;
+  margin: 0 0.75rem;
+}
+.filigree::after { background: linear-gradient(to left, transparent, var(--color-gold-400)); }
+
+a { color: var(--color-gold-200); }
+a:hover { color: var(--color-gold-50); }
+
+::selection { background: color-mix(in oklab, var(--color-gold-400) 50%, transparent); color: var(--color-ivory); }
+
+.prose-cambio {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--fg);
+  max-width: 68ch;
+}
+.prose-cambio h2 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  letter-spacing: 0.01em;
+  color: var(--color-gold-50);
+  scroll-margin-top: 6rem;
+}
+.prose-cambio h3 {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  margin-top: 2.25rem;
+  margin-bottom: 0.75rem;
+  color: var(--color-gold-200);
+  scroll-margin-top: 6rem;
+}
+.prose-cambio p { margin-bottom: 1rem; }
+.prose-cambio ul, .prose-cambio ol { margin: 0.75rem 0 1rem 1.25rem; }
+.prose-cambio li { margin-bottom: 0.4rem; }
+.prose-cambio ul { list-style: disc; }
+.prose-cambio ol { list-style: decimal; }
+.prose-cambio strong { color: var(--color-ivory); font-weight: 600; }
+.prose-cambio em { color: var(--color-gold-200); }
+.prose-cambio code {
+  font-family: var(--font-mono);
+  background: color-mix(in oklab, var(--color-gold-400) 12%, transparent);
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.25rem;
+  font-size: 0.92em;
+}
+.prose-cambio blockquote {
+  border-left: 2px solid var(--color-gold-400);
+  padding-left: 1rem;
+  font-style: italic;
+  color: var(--color-ivory-dim);
+  margin: 1rem 0;
+}
+
+/* Card 3D hover */
+.card-tilt {
+  transition: transform 350ms cubic-bezier(.2,.8,.2,1), box-shadow 350ms;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.card-tilt:hover {
+  transform: perspective(900px) rotateX(6deg) rotateY(-8deg) translateY(-4px);
+  box-shadow: 0 30px 50px -20px rgba(0,0,0,0.6), 0 0 0 1px var(--color-gold-400);
+}
+
+@media print {
+  body, html { background: white !important; color: black !important; }
+  body::before { display: none; }
+  a { color: black; text-decoration: underline; }
+  .no-print { display: none !important; }
+}

@@ -1,0 +1,12 @@
+---
+interface Props { id?: string; eyebrow?: string; title: string; }
+const { id, eyebrow, title } = Astro.props;
+---
+<section id={id} class="mt-24 first:mt-0 scroll-mt-24">
+  {eyebrow && <div class="eyebrow mb-3">{eyebrow}</div>}
+  <h2 class="font-display text-3xl sm:text-4xl text-[var(--color-gold-50)] mb-4 leading-tight">{title}</h2>
+  <hr class="gold-rule mb-8" />
+  <div class="prose-cambio max-w-none">
+    <slot />
+  </div>
+</section>

@@ -1,0 +1,37 @@
+---
+import Base from "~/layouts/Base.astro";
+import Dealer from "~/components/Dealer.tsx";
+---
+
+<Base>
+  <section class="min-h-[calc(100vh-4rem)] max-w-6xl mx-auto px-6 grid lg:grid-cols-[1.1fr_1fr] gap-12 items-center">
+    <div>
+      <div class="eyebrow mb-5 filigree">A game of memory & nerve</div>
+      <h1 class="font-display text-5xl sm:text-6xl lg:text-7xl leading-[1.04] text-[var(--color-gold-50)]">
+        Cambio.
+        <span class="block text-[var(--color-gold-200)] italic font-normal">The lowest hand wins.</span>
+      </h1>
+      <p class="mt-6 text-lg text-[var(--color-ivory)]/90 max-w-xl leading-relaxed">
+        Four cards face-down. Two glances. A whole table of imperfect memories.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a
+          href="/rules"
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-md font-display tracking-[0.18em] text-sm bg-[var(--color-gold-400)] text-[var(--color-felt-900)] hover:bg-[var(--color-gold-200)] transition-colors"
+        >
+          LEARN THE RULES →
+        </a>
+        <a
+          href="/history"
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-md font-display tracking-[0.18em] text-sm border border-[color-mix(in_oklab,var(--color-gold-400)_60%,transparent)] text-[var(--color-gold-200)] hover:text-[var(--color-gold-50)] hover:border-[var(--color-gold-200)] transition-colors"
+        >
+          THE HISTORY
+        </a>
+      </div>
+    </div>
+
+    <div class="grid place-items-center">
+      <Dealer client:load />
+    </div>
+  </section>
+</Base>

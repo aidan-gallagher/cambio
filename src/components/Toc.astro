@@ -1,0 +1,17 @@
+---
+interface Item { id: string; label: string; }
+interface Props { items: Item[]; title?: string; }
+const { items, title = "On this page" } = Astro.props;
+---
+<nav class="text-sm sticky top-24 self-start no-print" aria-label={title}>
+  <div class="eyebrow mb-3">{title}</div>
+  <ul class="space-y-1.5 border-l border-[color-mix(in_oklab,var(--color-gold-400)_25%,transparent)] pl-4">
+    {items.map((i) => (
+      <li>
+        <a href={`#${i.id}`} class="text-[var(--color-ivory-dim)] hover:text-[var(--color-gold-50)] transition-colors block py-0.5">
+          {i.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>

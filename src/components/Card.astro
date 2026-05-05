@@ -1,0 +1,103 @@
+---
+type Suit = "spades" | "hearts" | "diamonds" | "clubs" | "joker";
+type Rank =
+  | "A" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10"
+  | "J" | "Q" | "K" | "JOKER";
+
+interface Props {
+  suit?: Suit;
+  rank?: Rank;
+  faceDown?: boolean;
+  size?: "xs" | "sm" | "md" | "lg";
+  glow?: boolean;
+  tilt?: boolean;
+  label?: string;
+  rotate?: number;
+  class?: string;
+}
+const {
+  suit = "spades",
+  rank = "A",
+  faceDown = false,
+  size = "md",
+  glow = false,
+  tilt = true,
+  label,
+  rotate = 0,
+  class: cls = "",
+} = Astro.props;
+
+const sizes = {
+  xs: { w: 44, h: 64, fs: 12, pip: 8 },
+  sm: { w: 64, h: 92, fs: 16, pip: 12 },
+  md: { w: 96, h: 140, fs: 22, pip: 18 },
+  lg: { w: 140, h: 200, fs: 32, pip: 26 },
+};
+const s = sizes[size];
+
+const isRed = suit === "hearts" || suit === "diamonds";
+const isJoker = suit === "joker" || rank === "JOKER";
+const suitChar: Record<Suit, string> = {
+  spades: "\u2660",
+  hearts: "\u2665",
+  diamonds: "\u2666",
+  clubs: "\u2663",
+  joker: "\u2605",
+};
+---
+
+<div
+  class:list={["relative inline-block", tilt && "card-tilt", cls]}
+  style={`width:${s.w}px;height:${s.h}px;transform:rotate(${rotate}deg);${glow ? "box-shadow:0 0 0 1px var(--color-gold-400),0 0 30px -4px color-mix(in oklab,var(--color-gold-400) 60%,transparent);" : ""}`}
+  aria-label={label ?? (faceDown ? "Face-down card" : `${rank} of ${suit}`)}
+>
+  {faceDown ? (
+    <div
+      class="absolute inset-0 rounded-[10px] overflow-hidden"
+      style="background: linear-gradient(135deg,#173025,#0b1410); border:1px solid color-mix(in oklab, var(--color-gold-400) 45%, transparent);"
+    >
+      <div
+        class="absolute inset-1.5 rounded-[7px]"
+        style="border:1px solid color-mix(in oklab, var(--color-gold-400) 35%, transparent); background-image: repeating-linear-gradient(45deg, color-mix(in oklab, var(--color-gold-400) 12%, transparent) 0 2px, transparent 2px 8px), repeating-linear-gradient(-45deg, color-mix(in oklab, var(--color-gold-400) 10%, transparent) 0 2px, transparent 2px 8px);"
+      ></div>
+      <div class="absolute inset-0 grid place-items-center font-display text-[var(--color-gold-200)] tracking-[0.25em]" style={`font-size:${Math.max(10, s.fs - 8)}px`}>
+        C
+      </div>
+    </div>
+  ) : (
+    <div
+      class="absolute inset-0 rounded-[10px] bg-[var(--color-ivory)] text-[var(--color-suit-black)] overflow-hidden"
+      style="box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08), 0 8px 18px -8px rgba(0,0,0,0.6);"
+    >
+      {isJoker ? (
+        <div class="absolute inset-0 flex flex-col items-center justify-center">
+          <div class="font-display tracking-[0.25em]" style={`font-size:${s.fs * 0.55}px`}>JOKER</div>
+          <div class="text-[var(--color-gold-500)]" style={`font-size:${s.fs * 1.6}px;line-height:1`}>★</div>
+        </div>
+      ) : (
+        <>
+          <div
+            class={`absolute top-1.5 left-2 leading-none font-semibold ${isRed ? "text-[var(--color-suit-red)]" : "text-[var(--color-suit-black)]"}`}
+            style={`font-size:${s.fs * 0.78}px`}
+          >
+            <div>{rank}</div>
+            <div style={`font-size:${s.pip}px;line-height:1`}>{suitChar[suit]}</div>
+          </div>
+          <div
+            class={`absolute bottom-1.5 right-2 leading-none font-semibold rotate-180 ${isRed ? "text-[var(--color-suit-red)]" : "text-[var(--color-suit-black)]"}`}
+            style={`font-size:${s.fs * 0.78}px`}
+          >
+            <div>{rank}</div>
+            <div style={`font-size:${s.pip}px;line-height:1`}>{suitChar[suit]}</div>
+          </div>
+          <div
+            class={`absolute inset-0 grid place-items-center ${isRed ? "text-[var(--color-suit-red)]" : "text-[var(--color-suit-black)]"}`}
+            style={`font-size:${s.fs * 1.7}px;opacity:0.92`}
+          >
+            {suitChar[suit]}
+          </div>
+        </>
+      )}
+    </div>
+  )}
+</div>

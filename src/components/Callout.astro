@@ -1,0 +1,53 @@
+---
+interface Props {
+  variant?: "tip" | "warning" | "misplay" | "etiquette" | "lore";
+  title?: string;
+}
+const { variant = "tip", title } = Astro.props;
+
+const styles: Record<string, { bg: string; border: string; label: string; icon: string }> = {
+  tip: {
+    bg: "color-mix(in oklab, var(--color-gold-400) 9%, transparent)",
+    border: "color-mix(in oklab, var(--color-gold-400) 45%, transparent)",
+    label: "Tip",
+    icon: "✦",
+  },
+  warning: {
+    bg: "color-mix(in oklab, #b1261f 12%, transparent)",
+    border: "color-mix(in oklab, #b1261f 55%, transparent)",
+    label: "Watch out",
+    icon: "!",
+  },
+  misplay: {
+    bg: "color-mix(in oklab, #b1261f 9%, transparent)",
+    border: "color-mix(in oklab, #b1261f 45%, transparent)",
+    label: "Avoid misplay",
+    icon: "✕",
+  },
+  etiquette: {
+    bg: "color-mix(in oklab, var(--color-gold-200) 9%, transparent)",
+    border: "color-mix(in oklab, var(--color-gold-200) 35%, transparent)",
+    label: "Etiquette",
+    icon: "♣",
+  },
+  lore: {
+    bg: "color-mix(in oklab, #173025 60%, transparent)",
+    border: "color-mix(in oklab, var(--color-gold-200) 25%, transparent)",
+    label: "Lore",
+    icon: "❦",
+  },
+};
+const s = styles[variant];
+---
+
+<aside
+  class="my-6 rounded-lg p-5 not-prose"
+  style={`background:${s.bg};border:1px solid ${s.border};`}
+>
+  <div class="flex items-baseline gap-3 mb-2">
+    <span class="font-display text-[var(--color-gold-200)] tracking-[0.2em] text-xs">{s.icon}&nbsp;&nbsp;{(title ?? s.label).toUpperCase()}</span>
+  </div>
+  <div class="text-[var(--color-ivory)] leading-relaxed text-[0.98rem]">
+    <slot />
+  </div>
+</aside>

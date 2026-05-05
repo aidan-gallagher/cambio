@@ -1,0 +1,95 @@
+---
+import Base from "~/layouts/Base.astro";
+import Card from "~/components/Card.astro";
+---
+
+<Base title="Cambio — One-page cheat sheet">
+  <div class="max-w-5xl mx-auto px-6 pt-16 pb-20">
+    <div class="flex items-end justify-between flex-wrap gap-4 mb-8 no-print">
+      <div>
+        <div class="eyebrow">Quick reference</div>
+        <h1 class="font-display text-4xl text-[var(--color-gold-50)] mt-2">Cambio cheat sheet</h1>
+      </div>
+      <button
+        onclick="window.print()"
+        class="px-5 py-2.5 rounded-md font-display tracking-[0.18em] text-sm border border-[color-mix(in_oklab,var(--color-gold-400)_60%,transparent)] text-[var(--color-gold-200)] hover:text-[var(--color-gold-50)] hover:border-[var(--color-gold-200)] transition-colors"
+      >
+        PRINT
+      </button>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <section class="rounded-xl p-6" style="background: color-mix(in oklab, var(--color-felt-700) 35%, transparent); border:1px solid color-mix(in oklab, var(--color-gold-400) 25%, transparent);">
+        <h2 class="font-display text-xl text-[var(--color-gold-50)] mb-3">Card values</h2>
+        <ul class="space-y-1.5 text-[0.98rem]">
+          <li class="flex justify-between"><span>Joker</span><span class="font-mono">−1</span></li>
+          <li class="flex justify-between"><span>Black King (♠ ♣)</span><span class="font-mono">0</span></li>
+          <li class="flex justify-between"><span>Ace</span><span class="font-mono">1</span></li>
+          <li class="flex justify-between"><span>2 – 10</span><span class="font-mono">face value</span></li>
+          <li class="flex justify-between"><span>Jack</span><span class="font-mono">11</span></li>
+          <li class="flex justify-between"><span>Queen</span><span class="font-mono">12</span></li>
+          <li class="flex justify-between"><span>Red King (♥ ♦)</span><span class="font-mono">13</span></li>
+        </ul>
+      </section>
+
+      <section class="rounded-xl p-6" style="background: color-mix(in oklab, var(--color-felt-700) 35%, transparent); border:1px solid color-mix(in oklab, var(--color-gold-400) 25%, transparent);">
+        <h2 class="font-display text-xl text-[var(--color-gold-50)] mb-3">Activatable cards</h2>
+        <ul class="space-y-2 text-[0.98rem]">
+          <li><strong>7 / 8</strong> — Look at one of <em>your</em> own cards.</li>
+          <li><strong>9 / 10</strong> — Look at one of <em>another player's</em> cards.</li>
+          <li><strong>Jack</strong> — Blind-swap any two cards on the table.</li>
+          <li><strong>Queen</strong> — Look at one card, then blind-swap it with any other.</li>
+          <li><strong>Red King</strong> — Force two other players to exchange one card each (optional).</li>
+        </ul>
+        <p class="text-[var(--color-ivory-dim)] text-sm mt-3 italic">Effects only trigger when drawn from the deck and discarded directly.</p>
+      </section>
+
+      <section class="rounded-xl p-6" style="background: color-mix(in oklab, var(--color-felt-700) 35%, transparent); border:1px solid color-mix(in oklab, var(--color-gold-400) 25%, transparent);">
+        <h2 class="font-display text-xl text-[var(--color-gold-50)] mb-3">Your turn — pick one</h2>
+        <ol class="space-y-2 text-[0.98rem] list-decimal list-inside">
+          <li>Draw the top of the deck (swap into your array, or just discard).</li>
+          <li>Take the top card of the discard pile and swap it into your array.</li>
+          <li>Call <strong>Cambio</strong> to end the round for yourself.</li>
+        </ol>
+      </section>
+
+      <section class="rounded-xl p-6" style="background: color-mix(in oklab, var(--color-felt-700) 35%, transparent); border:1px solid color-mix(in oklab, var(--color-gold-400) 25%, transparent);">
+        <h2 class="font-display text-xl text-[var(--color-gold-50)] mb-3">Matching out of turn</h2>
+        <ul class="space-y-1.5 text-[0.98rem]">
+          <li>Anyone can match the top discard with a same-rank card from the table.</li>
+          <li>Match your own card → eliminate it (your array shrinks).</li>
+          <li>Match another player's card → transfer one of yours into their slot.</li>
+          <li>Each discard may be matched <strong>at most once</strong>.</li>
+          <li>No matching from the deck. No matching during another player's swap.</li>
+          <li>Wrong match → take the card back <em>and</em> draw a penalty card.</li>
+        </ul>
+      </section>
+
+      <section class="rounded-xl p-6" style="background: color-mix(in oklab, var(--color-felt-700) 35%, transparent); border:1px solid color-mix(in oklab, var(--color-gold-400) 25%, transparent);">
+        <h2 class="font-display text-xl text-[var(--color-gold-50)] mb-3">Game end</h2>
+        <ul class="space-y-1.5 text-[0.98rem]">
+          <li>Round ends when someone calls Cambio (or knocks).</li>
+          <li>Each remaining player takes one final turn, then everyone reveals.</li>
+          <li>Game ends when any player crosses <strong>+75</strong> or <strong>−10</strong>.</li>
+        </ul>
+      </section>
+
+      <section class="rounded-xl p-6" style="background: color-mix(in oklab, var(--color-felt-700) 35%, transparent); border:1px solid color-mix(in oklab, var(--color-gold-400) 25%, transparent);">
+        <h2 class="font-display text-xl text-[var(--color-gold-50)] mb-3">Etiquette</h2>
+        <ul class="space-y-1.5 text-[0.98rem]">
+          <li>One hand. One card at a time (except mid-swap).</li>
+          <li>Reveal discards so all players see at the same instant.</li>
+          <li>Don't throw cards. Don't tabletalk specific values.</li>
+          <li>House rules trump everything else here.</li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="mt-10 flex justify-center gap-2 no-print">
+      <Card rank="JOKER" suit="joker" size="sm" rotate={-6} />
+      <Card rank="K" suit="spades" size="sm" rotate={-2} />
+      <Card rank="A" suit="hearts" size="sm" rotate={2} />
+      <Card rank="Q" suit="diamonds" size="sm" rotate={6} />
+    </div>
+  </div>
+</Base>

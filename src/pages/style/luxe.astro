@@ -1,0 +1,31 @@
+---
+import Base from "~/layouts/Base.astro";
+import Card from "~/components/Card.astro";
+import Callout from "~/components/Callout.astro";
+import RuleCard from "~/components/RuleCard.astro";
+---
+<Base title="Style preview — Dark Luxe">
+  <div class="max-w-4xl mx-auto px-6 py-20">
+    <div class="eyebrow filigree">Style A</div>
+    <h1 class="font-display text-5xl text-[var(--color-gold-50)] mt-3 mb-2">Dark Luxe Casino</h1>
+    <p class="text-[var(--color-ivory)]/85 text-lg mb-10 max-w-2xl">Deep felt greens and brushed gold. Serif display type, soft grain, cards that catch the light.</p>
+
+    <div class="flex gap-3 flex-wrap mb-10">
+      <Card rank="JOKER" suit="joker" size="md" rotate={-6} />
+      <Card rank="K" suit="spades" size="md" />
+      <Card rank="A" suit="hearts" size="md" rotate={4} />
+      <Card rank="Q" suit="diamonds" size="md" rotate={-2} />
+      <Card rank="K" suit="hearts" size="md" rotate={8} />
+    </div>
+
+    <Callout variant="tip">A tip-style callout uses gold ink on a faintly gilt background.</Callout>
+    <Callout variant="misplay">A misplay/penalty callout uses a muted blood-red.</Callout>
+    <Callout variant="lore">Lore callouts use a darker felt panel for historical asides.</Callout>
+
+    <div class="my-8">
+      <RuleCard title="Any Queen" rank="Q" suit="hearts" value="Look-then-swap" tagline="Look at one card, then blind-swap it with any other card.">
+        Power-card panel, mixed cards on the left, copy on the right, faint inset glow.
+      </RuleCard>
+    </div>
+  </div>
+</Base>

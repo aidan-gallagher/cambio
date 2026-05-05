@@ -1,0 +1,18 @@
+---
+interface Event { year: string; title: string; body: string; }
+interface Props { events: Event[]; }
+const { events } = Astro.props;
+---
+<ol class="relative border-l-2 border-[color-mix(in_oklab,var(--color-gold-400)_35%,transparent)] ml-3 not-prose space-y-10">
+  {events.map((e) => (
+    <li class="pl-8 relative">
+      <span
+        class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full"
+        style="background: var(--color-gold-400); box-shadow: 0 0 0 4px var(--color-felt-900), 0 0 18px var(--color-gold-400);"
+      ></span>
+      <div class="font-display text-[var(--color-gold-200)] tracking-[0.18em] text-xs mb-1">{e.year}</div>
+      <h3 class="font-display text-[var(--color-gold-50)] text-xl mb-1">{e.title}</h3>
+      <p class="text-[var(--color-ivory)] leading-relaxed">{e.body}</p>
+    </li>
+  ))}
+</ol>

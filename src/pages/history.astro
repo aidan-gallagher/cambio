@@ -1,0 +1,159 @@
+---
+import Base from "~/layouts/Base.astro";
+import Section from "~/components/Section.astro";
+import Timeline from "~/components/Timeline.astro";
+import Callout from "~/components/Callout.astro";
+
+const events = [
+  {
+    year: "c. 1500",
+    title: "Coucou is born in France",
+    body: "A simple gambling game called Coucou — \"cuckoo\" — emerges in late-medieval France. Players hold a single card and try not to end the round with the lowest. The mechanic of pushing a card sideways for a forced exchange becomes the seed of an entire family of games.",
+  },
+  {
+    year: "Late 17th century",
+    title: "Italian printers create a dedicated deck",
+    body: "An Italian manufacturer designs a 38-card deck specifically for the game, naming it Cuccú after its highest card. The deck features two copies of each of 19 unique pictures: numerals, picture cards (Inn, Cat, Horse, Guard, Cuckoo) and a Fool whose value floats — a direct ancestor of the modern Harlequin / Joker.",
+  },
+  {
+    year: "17th–18th c.",
+    title: "Spread through Central Europe",
+    body: "Cuccú diffuses north as Hexenspiel (\"witch game\") and Vogelkarten (\"bird cards\") in southern Germany, Austria, and Switzerland. Each region tweaks the imagery and rule set; the cuckoo, hussar, and pig become recurring characters.",
+  },
+  {
+    year: "1741",
+    title: "First Swedish mention as Campio",
+    body: "A Swedish court record from 1741 contains the earliest known reference to the game in Sweden under the name Campio — a corruption of the Italian / Latin cambio (\"exchange\"), also rendered camfio in early manuscripts. The name describes the game's central mechanic: cards changing hands.",
+  },
+  {
+    year: "1750s",
+    title: "The Swedish heyday",
+    body: "Cambio becomes a national pastime. Decks are produced domestically; the rules stabilise into a 42-card pack with two copies of 21 unique pictures, including a Wreath, Flowerpot, Mask, Inn, Cavalier, Pig, Hussar, Cuckoo, and Harlequin. The game is celebrated in Carl Michael Bellman's poem Fredmans Testamente №181, \"Kambiospelet\".",
+  },
+  {
+    year: "1826 / 1833",
+    title: "The name 'Kille' takes over",
+    body: "Private correspondence from 1826 and printed sources from 1833 begin to refer to the game as Kille — almost certainly a softened pronunciation of \"Harlequin\", the highest-ranked card. By the 1850s Kille is the standard Swedish name.",
+  },
+  {
+    year: "1897",
+    title: "Industrial-era Kille decks",
+    body: "Stockholm printer A. Boman produces beautifully engraved Kille cards, examples of which now sit in the collection of the Hallwyl Museum. Two Swedish manufacturers — Öberg (now part of Cartamundi) and Offason — continue to print Kille decks today.",
+  },
+  {
+    year: "20th–21st century",
+    title: "Modern Cambio re-emerges on a 52-card deck",
+    body: "The contemporary game described on this site uses an ordinary 52-card deck plus jokers and shares the soul (memory, exchange, partial information) of the older Cambio family. It belongs to the same broader draw-and-discard tradition as Golf and Yaniv, and it travels under many local names — Pablo, Cabo, Bondskeeper — depending on which dorm room or pub it landed in.",
+  },
+];
+
+const aliases = [
+  { name: "Kille", note: "The dominant Swedish name from the mid-19th century onward; almost certainly a corruption of Harlequin." },
+  { name: "Harlequin", note: "The English-language name attached to the same Swedish deck and the game's highest card." },
+  { name: "Cambio / Campio", note: "From Italian / Latin cambio (\"exchange\"). The earliest Swedish name; the modern 52-card game inherited it." },
+  { name: "Kambio / Kamfio / Camfio", note: "Phonetic Swedish spellings recorded in the 18th–19th centuries." },
+  { name: "Pablo / Cabo", note: "Common modern names for closely related 52-card draw-and-discard variants on contemporary tables." },
+  { name: "Cuccú / Coucou / Hexenspiel / Vogelkarten", note: "The earlier French and Central European ancestors that the Swedish Kille descends from." },
+];
+---
+
+<Base title="Cambio — A 500-year history" description="From medieval French Coucou to Swedish Kille and the modern 52-card Cambio: the surprisingly deep history of a small game.">
+  <div class="max-w-4xl mx-auto px-6 pt-20 pb-10">
+    <div class="eyebrow filigree">A 500-year inheritance</div>
+    <h1 class="font-display text-5xl sm:text-6xl text-[var(--color-gold-50)] mt-4 leading-tight">A short history of Cambio</h1>
+    <p class="mt-4 text-[var(--color-ivory)]/85 text-lg leading-relaxed">
+      Cambio is older than it looks. The game on your table is the most recent member of a
+      family that runs through medieval France, Renaissance Italy, the courts of southern
+      Germany, and three centuries of Swedish pubs. Along the way it has been called
+      <em>Coucou</em>, <em>Cuccú</em>, <em>Hexenspiel</em>, <em>Vogelkarten</em>, <em>Campio</em>,
+      <em>Kambio</em>, <em>Kille</em>, <em>Harlequin</em>, and a dozen modern variants.
+    </p>
+  </div>
+
+  <div class="max-w-4xl mx-auto px-6">
+    <Section id="timeline" eyebrow="Five centuries on a card table" title="Timeline">
+      <div class="not-prose">
+        <Timeline events={events} />
+      </div>
+    </Section>
+
+    <Section id="aliases" eyebrow="Same game, many names" title="Aliases & relatives">
+      <p>
+        The same game has worn many names. Here are the ones you're most likely to see in print
+        or hear at someone else's table.
+      </p>
+      <div class="not-prose grid sm:grid-cols-2 gap-4 mt-6">
+        {aliases.map((a) => (
+          <div
+            class="rounded-lg p-5"
+            style="background: color-mix(in oklab, var(--color-felt-700) 35%, transparent); border:1px solid color-mix(in oklab, var(--color-gold-400) 22%, transparent);"
+          >
+            <div class="font-display text-[var(--color-gold-50)] text-lg mb-1">{a.name}</div>
+            <div class="text-[var(--color-ivory)]/85 text-sm leading-relaxed">{a.note}</div>
+          </div>
+        ))}
+      </div>
+      <Callout variant="lore" title="A note on the family tree">
+        Strictly speaking, the original Swedish "Kille" is played with a dedicated 42-card deck
+        and is in the <em>Cuckoo group</em> of comparing games. The modern game described on
+        this site is played with a 52-card deck and lives in the <em>draw-and-discard</em>
+        family alongside Golf and Yaniv. The two share a name, a spirit (exchange, memory,
+        bluff), and several hundred years of borrowed mechanics — but they are not literally
+        the same game. House rules and modern variants like Pablo and Cabo span both lineages.
+      </Callout>
+    </Section>
+
+    <Section id="culture" eyebrow="In the Swedish imagination" title="Culture & language">
+      <p>
+        Kille / Cambio leaves visible traces in Swedish. Two phrases used in everyday speech
+        come straight from the One-Card Kille table:
+      </p>
+      <ul>
+        <li><em>Svinhugg går igen</em> — "the pig bites back": a rudeness that rebounds on its perpetrator.</li>
+        <li><em>Gå värdshus förbi</em> — "go past the inn": a missed opportunity.</li>
+      </ul>
+      <p>
+        The 18th-century Swedish poet <strong>Carl Michael Bellman</strong> dedicated
+        <em>Fredmans Testamente</em> №181 — "Kambiospelet" — to the despair of a player mid-game:
+      </p>
+      <blockquote>
+        Hej, gutår, och kambio! / Granne, marsch ur potten! / Blaren, den hundsvotten — /
+        Kambio . . . och kuku står. / Jag ser skorsten ryka: / Värdshus måste stryka...
+      </blockquote>
+      <p class="text-[var(--color-ivory-dim)] italic">
+        "Hey, cheers, and Cambio! Neighbour, march away from the pot! The Fool, that scoundrel —
+        Cambio . . . and Cuckoo stands fast. I see a chimney smoking: the Inn must strike..."
+      </p>
+      <p>
+        And the satirist <em>Falstaff, fakir</em>, in his alphabet book, summed up the working
+        man's leisure under the letter P: <em>"Proletären gärna ville / dricka punsch och spela
+        kille"</em> — "The common labourer was eager to drink punch and play Kille."
+      </p>
+    </Section>
+
+    <Section id="sources" eyebrow="Where this comes from" title="Sources">
+      <ul>
+        <li>
+          <a href="https://en.wikipedia.org/wiki/Kille_(card_game)" target="_blank" rel="noreferrer">
+            Wikipedia: <em>Kille (card game)</em>
+          </a>{" "}— the redirect target for "Cambio (card game)"; collates the Swedish-language scholarship below.
+        </li>
+        <li>
+          Glimne, Dan (2016). <em>Kortspelshandboken</em> (3rd ed., expanded). Stockholm: Känguru. ISBN 978-91-7663-115-7. Glimne is the standard modern reference for Swedish card games.
+        </li>
+        <li>
+          Torgny, Ove (2003). <em>Tio spel med spader kung</em>. Stockholm: Bilda. ISBN 91-574-7484-2.
+        </li>
+        <li>
+          Werner & Sandgren (1975). <em>Kortoxen</em> (9th ed.). Stockholm: Forum. ISBN 91-37-05798-7.
+        </li>
+        <li>
+          A. G. Smith (1991). "The Cambio Packs and the Games Played with Them, I & II", in <em>The Playing-Card</em> XIX(3) and XIX(4).
+        </li>
+        <li>
+          Insert sheet from Offason's <em>Killelek</em>, by Dan Glimne — <em>Regler för Killespelet: Historik</em> and <em>Enkortskille</em>.
+        </li>
+      </ul>
+    </Section>
+  </div>
+</Base>

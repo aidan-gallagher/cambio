@@ -206,27 +206,25 @@ const values = [
       <Section id="opening" eyebrow="The single permitted glance" title="Opening peek">
         <p>
           Before the first card is played, every player looks at their own <strong>bottom two cards</strong>.
-          Until the first card hits the discard pile you may peek as often as you like; once
-          play starts, no more free peeks.
+          Once play starts, no more free peeks at your cards.
         </p>
         <p>
           Play proceeds <strong>clockwise</strong>, starting with the player to the left of
           the dealer.
         </p>
-        <Callout variant="tip" title="First-player offset">
-          Because the discard pile is empty at the start, the first player may only draw from
-          the deck. Their discarded card becomes the first face-up card available to the next
-          player.
-        </Callout>
       </Section>
 
-      <Section id="turn" eyebrow="Three things you can do" title="Turn structure">
-        <p>On your turn, choose exactly one of three operations:</p>
+      <Section id="turn" eyebrow="Draw, decide, discard" title="Turn structure">
+        <p>
+          On your turn you briefly hold five cards — your four in the grid plus a new one — and
+          you put one of those five face-up on the discard pile, leaving four cards in your grid
+          for the next player. The turn breaks into three actions:
+        </p>
         <div class="not-prose grid sm:grid-cols-3 gap-5 my-6">
           {[
-            { n: "1", t: "Draw from the deck", b: "Look at the top card. Either swap it into your array (discarding the displaced card face-up) or simply discard it." },
-            { n: "2", t: "Take the top discard", b: "Take the face-up top card of the discard pile and swap it into your array. Available only if the pile has cards." },
-            { n: "3", t: "Call Cambio", b: "Knock to end the game for yourself. You skip your final exchange; everyone else gets one more turn." },
+            { n: "1", t: "Draw", b: "Take the top card of the deck and look at it." },
+            { n: "2", t: "Decide", b: "Either keep the new card (swap it into your grid; the card you displace becomes your discard candidate) or don't (the card you just drew is the candidate)." },
+            { n: "3", t: "Discard", b: "Place your candidate face-up on the discard pile. If it's a power card (7, 8, 9, 10, J, Q, Red K), its effect fires now." },
           ].map((o) => (
             <div
               class="rounded-xl p-5"
@@ -239,15 +237,9 @@ const values = [
           ))}
         </div>
         <p>
-          Card "activations" only trigger when a card is drawn <em>from the deck</em> and placed
-          <em>directly</em> into the discard pile — never when you take a card from the discard,
-          and never on the card you swap out of your array.
+          Or, instead of any of that, <strong>call Cambio</strong> to end the game for yourself.
+          See <a href="#cambio">Calling Cambio</a> below.
         </p>
-        <Callout variant="misplay">
-          When you draw from the deck or the discard and exchange it for a card in your array,
-          the card you displace is just discarded. It does <strong>not</strong> activate, even if
-          it happens to be a 7, 9, Jack, Queen, or Red King.
-        </Callout>
       </Section>
 
       <Section id="values" eyebrow="The point chart" title="Card values">
@@ -273,16 +265,12 @@ const values = [
             </tbody>
           </table>
         </div>
-        <p class="mt-6">
-          A pristine winning hand is therefore something like Joker, Joker, Black King, Black
-          King — a ghostly <strong>−2</strong>. Most games end somewhere between 4 and 15.
-        </p>
       </Section>
 
       <Section id="activatable" eyebrow="Power cards" title="Activatable cards">
         <p>
-          Five card types do something special when drawn from the deck and placed directly into
-          the discard pile. Each effect resolves before play continues.
+          Five card types do something special when placed face-up on the discard pile. Each
+          effect resolves before play continues.
         </p>
 
         <div class="not-prose space-y-5 my-8">
@@ -457,7 +445,7 @@ const values = [
           draw another Ace. You could exchange Ace-for-Ace and stick the matched Ace, leaving
           you with three known points — or you could exchange the new Ace for your 3, dropping
           your total by one extra point relative to the match. As the last move of the game,
-          the latter is superior; the discarded Ace will sit there for the next player anyway.
+          the latter is superior; the discarded Ace is now on the pile for anyone to match.
         </p>
 
         <h3>2. The Jack-on-Jack open</h3>

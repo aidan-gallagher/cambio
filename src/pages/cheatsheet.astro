@@ -41,16 +41,17 @@ import Card from "~/components/Card.astro";
           <li><strong>Queen</strong> — Look at one card, then blind-swap it with any other.</li>
           <li><strong>Red King</strong> — Force two other players to exchange one card each (optional).</li>
         </ul>
-        <p class="text-[var(--color-ivory-dim)] text-sm mt-3 italic">Effects only trigger when drawn from the deck and discarded directly.</p>
+        <p class="text-[var(--color-ivory-dim)] text-sm mt-3 italic">Effects fire on any card placed face-up on the discard pile.</p>
       </section>
 
       <section class="rounded-xl p-6" style="background: color-mix(in oklab, var(--color-felt-700) 35%, transparent); border:1px solid color-mix(in oklab, var(--color-gold-400) 25%, transparent);">
-        <h2 class="font-display text-xl text-[var(--color-gold-50)] mb-3">Your turn — pick one</h2>
+        <h2 class="font-display text-xl text-[var(--color-gold-50)] mb-3">Your turn</h2>
         <ol class="space-y-2 text-[0.98rem] list-decimal list-inside">
-          <li>Draw the top of the deck (swap into your array, or just discard).</li>
-          <li>Take the top card of the discard pile and swap it into your array.</li>
-          <li>Call <strong>Cambio</strong> to end the game for yourself.</li>
+          <li><strong>Draw</strong> the top card of the deck.</li>
+          <li><strong>Decide</strong>: keep it (swap into your grid) or not.</li>
+          <li><strong>Discard</strong> your candidate face-up. Power cards activate.</li>
         </ol>
+        <p class="text-[var(--color-ivory-dim)] text-sm mt-3 italic">Or, instead, call <strong>Cambio</strong> to end the game for yourself.</p>
       </section>
 
       <section class="rounded-xl p-6" style="background: color-mix(in oklab, var(--color-felt-700) 35%, transparent); border:1px solid color-mix(in oklab, var(--color-gold-400) 25%, transparent);">

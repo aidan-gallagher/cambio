@@ -16,10 +16,9 @@ const toc = [
   { id: "turn", label: "Turn structure" },
   { id: "values", label: "Card values" },
   { id: "activatable", label: "Activatable cards" },
-  { id: "matching", label: "Matching out of turn" },
+  { id: "snap", label: "Snap" },
   { id: "penalties", label: "Penalties" },
   { id: "cambio", label: "Calling Cambio" },
-  { id: "examples", label: "Worked examples" },
 ];
 
 const values: Array<{
@@ -45,7 +44,7 @@ const values: Array<{
     <h1 class="font-display text-5xl sm:text-6xl text-[var(--color-gold-50)] mt-4 leading-tight">How to play Cambio</h1>
     <p class="mt-4 text-[var(--color-ivory)]/85 max-w-2xl text-lg leading-relaxed">
       A complete, reorganised guide to the modern game — from setup and turn structure to the
-      finer art of out-of-turn matching, and penalties.
+      finer art of snap and penalties.
     </p>
   </div>
 
@@ -308,104 +307,53 @@ const values: Array<{
 
         <Callout variant="tip">
           Activations resolve immediately when the card is discarded. While you're mid-swap
-          (Jack, Queen, or Black King), no other player may attempt to match the discard until
+          (Jack, Queen, or Black King), no other player may attempt to snap the discard until
           your swap is complete.
         </Callout>
       </Section>
 
-      <Section id="matching" eyebrow="The fastest play in the game" title="Matching out of turn (sticking)">
+      <Section id="snap" eyebrow="The fastest play in the game" title="Snap">
         <p>
-          At any point — <strong>any player</strong>
-          may attempt to match the top card of the discard pile by playing a card of the same
-          rank from the table. This is sometimes called <em>sticking</em>.
+          At any point — except while a player is mid-swap — <strong>any player</strong> may
+          <strong>snap</strong> the top card of the discard pile by slapping a card of the
+          same rank from the table on top of it.
         </p>
-        <h3>What a successful match does</h3>
+        <h3>What a successful snap does</h3>
         <ul>
           <li>
-            If you match with one of your own cards, that card joins the discard pile and
+            If you snap with one of your own cards, that card joins the discard pile and
             <strong> you do not replace it</strong>. Your array shrinks by one.
           </li>
           <li>
-            If you match with another player's card, you <strong>transfer one of your own cards
-            into their array</strong> in the empty slot you just created. Your array shrinks; theirs
-            stays the same size but gains an unknown card.
+            If you snap another player's card, you <strong>transfer one of your own cards
+            into their array</strong> in the empty slot you just created. Your array shrinks;
+            theirs stays the same size but gains an unknown card.
           </li>
-          <li>You may never match directly from the deck.</li>
-        </ul>
-        <h3>What is matchable</h3>
-        <ul>
-          <li>The card the current player just discarded — including by the current player themselves.</li>
-          <li>Kings of either colour. Note: if a Red King covers a Black King, the Black King is buried until shuffled back in.</li>
-          <li>
-            Multiple attempts on the same discard <em>by the same player</em>, provided previous attempts
-            were genuine and penalties were paid. A misremembered location does not bar a second try.
-          </li>
-        </ul>
-        <h3>What is not matchable</h3>
-        <ul>
-          <li>Any card already covered or removed by play in progress. Matches must physically match the top of the pile.</li>
-          <li>Matches by players who currently hold more than one card in hand, or by players actively trading.</li>
-          <li>A discard that has already been successfully matched in this lifetime.</li>
+          <li>You may never snap directly from the deck.</li>
         </ul>
 
-        <Callout variant="misplay">
-          A card matched on top of a discard does not itself become matchable — the new top
-          card has been "claimed". Likewise, taking the top of the discard pile into your array
-          does not revive the card beneath it.
-        </Callout>
+        <h3>What a failed snap does</h3>
+        <p>
+          If you turn over a card to snap but get it wrong, the card stays where it is — and
+          you draw a new face-down card from the top of the deck as a penalty, growing your
+          array by one.
+        </p>
+
 
         <Callout variant="tip" title="Speed is the whole point">
-          Each discarded card may be matched <strong>at most once</strong>. If two players reach
-          for it, the faster hand wins; the slower one keeps their card.
+          Each discarded card may be snapped <strong>at most once</strong>. If two players
+          reach for it, the faster hand wins; the slower one keeps their card.
         </Callout>
-      </Section>
-
-      <Section id="penalties" eyebrow="When things go wrong" title="Penalties">
-        <ol>
-          <li>
-            <strong>Failed match:</strong> if you put down a wrong card while attempting to
-            match, replace it in your array and <strong>draw a new card from the deck</strong>
-            to add to your array as a penalty.
-          </li>
-          <li>
-            You may keep the location of your failed match secret — you are not forced to
-            reveal it to the table. Of course, anyone watching closely should already know it.
-          </li>
-          <li>
-            If cards are revealed (deliberately or accidentally) all players are entitled to use
-            that information for the rest of the game.
-          </li>
-          <li>
-            If you make a genuine match attempt but another player succeeds first, there is no
-            penalty — except that the other players now know one of your cards.
-          </li>
-          <li>
-            A partial attempt that doesn't fully reveal the card carries no penalty if you don't
-            yourself look at it. Feinting matches to mislead opponents is permissible (though
-            don't be disruptive).
-          </li>
-          <li>
-            <strong>Two-handed play</strong> and <strong>holding more than one card at a time</strong>
-            (except while swapping) earn a penalty card at the table's discretion.
-          </li>
-        </ol>
       </Section>
 
       <Section id="cambio" eyebrow="Ending the game" title="Calling Cambio">
         <p>
-          On your turn, instead of drawing, you may declare <strong>"Cambio"</strong> (or simply
-          knock the table). You forfeit the rest of your turn. Each remaining player takes one
+          On your turn, instead of drawing, you may declare <strong>"Cambio"</strong>. You forfeit the rest of your turn. Each remaining player takes one
           last turn, then everyone reveals their array and totals are scored.
         </p>
         <p>
           You cannot call Cambio out of turn. The call must be made before you touch the deck.
         </p>
-        <Callout variant="tip" title="When to knock">
-          Calling Cambio is most valuable when (a) your known hand is genuinely low, (b) at
-          least one opponent has visibly large unknowns, and (c) your last-turn replacements
-          are unlikely to drop your score further than someone else's last turn might drop
-          theirs.
-        </Callout>
       </Section>
     </article>
   </div>

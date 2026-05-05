@@ -49,7 +49,7 @@ import Card from "~/components/Card.astro";
         <ol class="space-y-2 text-[0.98rem] list-decimal list-inside">
           <li>Draw the top of the deck (swap into your array, or just discard).</li>
           <li>Take the top card of the discard pile and swap it into your array.</li>
-          <li>Call <strong>Cambio</strong> to end the round for yourself.</li>
+          <li>Call <strong>Cambio</strong> to end the game for yourself.</li>
         </ol>
       </section>
 
@@ -68,9 +68,9 @@ import Card from "~/components/Card.astro";
       <section class="rounded-xl p-6" style="background: color-mix(in oklab, var(--color-felt-700) 35%, transparent); border:1px solid color-mix(in oklab, var(--color-gold-400) 25%, transparent);">
         <h2 class="font-display text-xl text-[var(--color-gold-50)] mb-3">Game end</h2>
         <ul class="space-y-1.5 text-[0.98rem]">
-          <li>Round ends when someone calls Cambio (or knocks).</li>
+          <li>Game ends when someone calls <strong>Cambio</strong> (or knocks).</li>
           <li>Each remaining player takes one final turn, then everyone reveals.</li>
-          <li>Game ends when any player crosses <strong>+75</strong> or <strong>−10</strong>.</li>
+          <li>Lowest total wins.</li>
         </ul>
       </section>
 

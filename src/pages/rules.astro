@@ -19,7 +19,6 @@ const toc = [
   { id: "matching", label: "Matching out of turn" },
   { id: "penalties", label: "Penalties" },
   { id: "cambio", label: "Calling Cambio" },
-  { id: "etiquette", label: "Etiquette" },
   { id: "examples", label: "Worked examples" },
 ];
 
@@ -28,7 +27,7 @@ const values: Array<{
   value: string;
   cards: Array<{ rank: string; suit: string }>;
 }> = [
-  { card: "Red King (♥ ♦)", value: "−1", cards: [{ rank: "K", suit: "diamonds" }] },
+  { card: "Red King (♥ ♦)", value: "−1", cards: [{ rank: "K", suit: "diamonds" }, { rank: "K", suit: "hearts" }] },
   { card: "Joker", value: "0", cards: [{ rank: "JOKER", suit: "joker" }] },
   { card: "Ace", value: "1", cards: [{ rank: "A", suit: "hearts" }] },
   { card: "2 – 10", value: "Face value", cards: [{ rank: "5", suit: "diamonds" }] },
@@ -46,7 +45,7 @@ const values: Array<{
     <h1 class="font-display text-5xl sm:text-6xl text-[var(--color-gold-50)] mt-4 leading-tight">How to play Cambio</h1>
     <p class="mt-4 text-[var(--color-ivory)]/85 max-w-2xl text-lg leading-relaxed">
       A complete, reorganised guide to the modern game — from setup and turn structure to the
-      finer art of out-of-turn matching, penalties, and table etiquette.
+      finer art of out-of-turn matching, and penalties.
     </p>
   </div>
 
@@ -279,44 +278,44 @@ const values: Array<{
 
       <Section id="activatable" eyebrow="Power cards" title="Activatable cards">
         <p>
-          Five card types do something special when placed face-up on the discard pile. Each
+          Four card types do something special when placed face-up on the discard pile. Each
           effect resolves before play continues.
         </p>
 
         <div class="not-prose space-y-5 my-8">
-          <RuleCard title="Seven or Eight" rank="7" suit="diamonds" rankAlt="8" suitAlt="clubs" value="Know your fate" tagline="Look at one card from your own array.">
-            Pick up one of your own face-down cards, look at it privately, and return it to its
-            place. Use this to confirm what you've forgotten or to verify a swap.
+          <RuleCard title="Seven or Eight" rank="7" suit="diamonds" rankAlt="8" suitAlt="clubs" value="See your fate" tagline="Seven or eight — see your fate.">
+            Look at one card from <strong>your own</strong> array. Pick a face-down card,
+            peek at it privately, and return it.
           </RuleCard>
-          <RuleCard title="Nine or Ten" rank="9" suit="spades" rankAlt="10" suitAlt="hearts" value="Know a friend" tagline="Look at one card from another player's array.">
-            Choose any opponent. Look privately at one of their cards, then return it. Especially
-            powerful late in the game when other players have already shown their hands.
+
+          <RuleCard title="Nine or Ten" rank="9" suit="spades" rankAlt="10" suitAlt="hearts" value="Spy again" tagline="Nine or ten — spy again.">
+            Look at one card from <strong>another player's</strong> array. Pick one of their
+            face-down cards, peek at it privately, and return it.
           </RuleCard>
-          <RuleCard title="Any Jack" rank="J" suit="clubs" value="Blind swap" tagline="Swap any two cards on the table without looking at either.">
-            Pick any two cards anywhere on the table — yours, theirs, mixed — and swap them.
-            Neither card is revealed to anyone. Useful for sabotaging a known low hand or
-            unloading a Red King you've been stuck with.
+
+          <RuleCard title="Jack or Queen" rank="J" suit="clubs" rankAlt="Q" suitAlt="hearts" value="Swap unseen" tagline="Jack or Queen — swap unseen.">
+            <strong>Blind-swap</strong> any two cards on the table — yours, theirs, mixed.
+            Neither card is revealed to anyone before or after.
           </RuleCard>
-          <RuleCard title="Any Queen" rank="Q" suit="hearts" value="Look-then-blind-swap" tagline="Look at one card on the table, then blind-swap it with any other card.">
-            Choose one card anywhere on the table and look at it. Then, without further looking,
-            swap it with any other card you choose. You may only look at one card per Queen.
-          </RuleCard>
-          <RuleCard title="Red King" rank="K" suit="hearts" value="Forced exchange (optional)" tagline="Choose two other players; they each pick a card from their array to exchange with one another.">
-            The dramatic one. You name two opponents and they trade one card each — chosen
-            blindly from their own arrays. Resolving a Red King's effect is <em>optional</em>;
-            you may decline.
+
+          <RuleCard title="Black or Red King" rank="K" suit="spades" rankAlt="K" suitAlt="hearts" value="Peek and fling" tagline="Any King — peek and fling.">
+            Two effects, in either order: <strong>look</strong> at any one card on the table,
+            and <strong>swap</strong> any card on the table with one of your own. The looked-at
+            card and the swapped card don't have to be the same. Both Black and Red Kings have
+            this effect.
           </RuleCard>
         </div>
 
         <Callout variant="tip">
-          Activations resolve immediately when the card is discarded. With a Queen mid-action,
-          finish the look-and-swap before any other player attempts to match the discard.
+          Activations resolve immediately when the card is discarded. While you're mid-swap
+          (Jack, Queen, or Black King), no other player may attempt to match the discard until
+          your swap is complete.
         </Callout>
       </Section>
 
       <Section id="matching" eyebrow="The fastest play in the game" title="Matching out of turn (sticking)">
         <p>
-          At any point — except while a player is in the middle of a swap — <strong>any player</strong>
+          At any point — <strong>any player</strong>
           may attempt to match the top card of the discard pile by playing a card of the same
           rank from the table. This is sometimes called <em>sticking</em>.
         </p>
@@ -407,77 +406,6 @@ const values: Array<{
           are unlikely to drop your score further than someone else's last turn might drop
           theirs.
         </Callout>
-      </Section>
-
-      <Section id="etiquette" eyebrow="Conventions of the table" title="Etiquette">
-        <ol>
-          <li>Cambio is played with <strong>one hand</strong> (ambidextrous players excepted).</li>
-          <li>You may only ever hold <strong>one card in one hand</strong> at any time, except in the act of swapping two cards.</li>
-          <li>
-            When discarding from your grid, all players must see the card <strong>at the same
-            time</strong>. Best practice: flip the card away from yourself, picking it up by
-            the far edge, or hold it face-down until it is directly above the discard pile and
-            flip it in the air.
-          </li>
-          <li><strong>House rules trump generic etiquette.</strong></li>
-          <li>Cards are not to be thrown.</li>
-          <li>
-            In disputes, neutral players or third parties adjudicate. When two players reach for
-            the same card, basic respect for card condition trumps speed; uninvolved players may
-            be consulted.
-          </li>
-          <li>If a serious disturbance scrambles the game (a flipped table, a flying card),
-          the players may vote by majority to reset the game.</li>
-          <li>
-            It is not illegal to attempt to match a card you don't fully know. Read risk versus
-            reward. For players whose arrays have ballooned to seven or more cards, consider a
-            cap on consecutive guesses or an instant-loss penalty — particularly when other
-            players are baiting matches just to leak information.
-          </li>
-          <li>
-            <strong>Tabletalk</strong> is hazardous. With every player chasing the lowest score,
-            it's easy to gang up on the player with one card left. References to specific
-            placements and values lie outside conventional play; keep banter abstract.
-          </li>
-        </ol>
-      </Section>
-
-      <Section id="examples" eyebrow="Putting it together" title="Worked examples">
-        <h3>1. Pocket sixes, then an ace</h3>
-        <p>
-          The game begins. Looking at your bottom two cards, you find a pair of sixes. On your
-          turn you draw an Ace from the deck and exchange it with one of your sixes. You may
-          immediately attempt to match the other six off the discard — provided you don't end
-          up holding both cards in one hand.
-        </p>
-        <p>
-          But matching isn't always optimal. Suppose your known hand is an Ace and a 2 and you
-          draw another Ace. You could exchange Ace-for-Ace and stick the matched Ace, leaving
-          you with three known points — or you could exchange the new Ace for your 3, dropping
-          your total by one extra point relative to the match. As the last move of the game,
-          the latter is superior; the discarded Ace is now on the pile for anyone to match.
-        </p>
-
-        <h3>2. The Jack-on-Jack open</h3>
-        <p>
-          You opened the game knowing one of your cards is a Jack. You draw — another Jack. You
-          may discard the new Jack and immediately match it with the Jack from your grid. This
-          is legal because matches may happen at any time during any player's turn, except
-          while a player is mid-trade. That rule exists mostly for Queens: if you draw a Queen,
-          discard it, and then look at another player's card and discover it is also a Queen,
-          you must <strong>finish the swap</strong> before you may attempt to match the two
-          Queens.
-        </p>
-
-        <h3>3. Down to one card</h3>
-        <p>
-          You've matched three of your four starting cards and avoided every penalty. You may
-          never have <strong>zero</strong> cards in your array. If you successfully match your
-          last card, you must immediately draw a fresh card from the deck to refill it. This can
-          be a gift: late in the game, if your sole card is a Red King, matching it with
-          another Red King guarantees your score will not increase — though you won't yet know
-          how much you've improved.
-        </p>
       </Section>
     </article>
   </div>

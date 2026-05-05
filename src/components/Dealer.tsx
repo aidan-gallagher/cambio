@@ -286,28 +286,46 @@ export default function Dealer() {
           height: 0,
         }}
       >
-        {/* Deck stack */}
-        {[0, 1, 2, 3].map((i) => (
-          <motion.div
-            key={`deck-${i}`}
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 + i * 0.04, duration: 0.4 }}
-            style={{
-              position: "absolute",
-              transform: `translate(${DECK.x - PILE_W / 2 - i * 1.5}px, ${DECK.y - (PILE_W * 1.45) / 2 - i * 1.5}px)`,
-            }}
-          >
-            <CardBack width={PILE_W} />
-          </motion.div>
-        ))}
+        {/* Deck stack — five layers so the deck has visible thickness;
+            top layers fade out one by one as cards are dealt. */}
+        {[0, 1, 2, 3, 4].map((i) => {
+          // Stagger the disappearance of the top deck layers across the
+          // first several dealt cards so the deck visibly thins.
+          const fadeAt = DEAL_START + (DEAL_SEQUENCE.length - 1 - i * 3) * DEAL_GAP;
+          return (
+            <motion.div
+              key={`deck-${i}`}
+              initial={{ opacity: 0, y: -6 }}
+              animate={
+                reduced
+                  ? { opacity: i === 0 ? 1 : 0.85 - i * 0.1, y: 0 }
+                  : stage === "idle"
+                    ? { opacity: 0, y: -6 }
+                    : { opacity: 1, y: 0 }
+              }
+              transition={{
+                delay: 0.05 + i * 0.04,
+                duration: 0.4,
+              }}
+              style={{
+                position: "absolute",
+                transform: `translate(${DECK.x - PILE_W / 2 - i * 1.5}px, ${DECK.y - (PILE_W * 1.45) / 2 - i * 1.5}px)`,
+                zIndex: i,
+              }}
+            >
+              <CardBack width={PILE_W} />
+            </motion.div>
+          );
+        })}
 
         {/* Dealt cards */}
         {DEAL_SEQUENCE.map((slot, i) => {
           const finalX = slot.x - slot.cardW / 2;
           const finalY = slot.y - (slot.cardW * 1.45) / 2;
+          // Start each card as the top of the deck (with the same per-card stagger
+          // so it sits visibly atop the stack just before it flicks out).
           const startX = DECK.x - slot.cardW / 2;
-          const startY = DECK.y - (slot.cardW * 1.45) / 2;
+          const startY = DECK.y - (slot.cardW * 1.45) / 2 - 4;
           const delay = DEAL_START + i * DEAL_GAP;
 
           const isYourBottom =
@@ -324,8 +342,8 @@ export default function Dealer() {
               key={`${slot.seat}-${slot.index}`}
               initial={
                 reduced
-                  ? { x: finalX, y: finalY, opacity: 1, rotate: slot.rotate, scale: 1 }
-                  : { x: startX, y: startY, opacity: 0, rotate: 0, scale: 0.94 }
+                  ? { x: finalX, y: finalY, opacity: 1, rotate: slot.rotate, scale: 1, zIndex: 0 }
+                  : { x: startX, y: startY, opacity: 0, rotate: 0, scale: 1.06, zIndex: 100 - i }
               }
               animate={
                 stage === "idle" && !reduced
@@ -341,7 +359,15 @@ export default function Dealer() {
               transition={
                 reduced
                   ? { duration: 0 }
-                  : { delay, duration: DEAL_DURATION, ease: [0.2, 0.8, 0.2, 1] }
+                  : {
+                      delay,
+                      duration: DEAL_DURATION,
+                      ease: [0.2, 0.8, 0.2, 1],
+                      // Snap on at the moment of departure so cards aren't
+                      // ghostly-faded while they travel — they leave the deck
+                      // already opaque, like a flicked top card.
+                      opacity: { delay, duration: 0.001 },
+                    }
               }
               style={{ position: "absolute" }}
             >

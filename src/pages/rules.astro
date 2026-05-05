@@ -23,14 +23,20 @@ const toc = [
   { id: "examples", label: "Worked examples" },
 ];
 
-const values = [
-  { card: "Joker", value: "−1", note: "Lowest card in the game.", suit: "joker", rank: "JOKER" },
-  { card: "Black King (♠ ♣)", value: "0", note: "The patron saint of late-game miracles.", suit: "spades", rank: "K" },
-  { card: "Ace", value: "1", note: "", suit: "hearts", rank: "A" },
-  { card: "2 – 10", value: "Face value", note: "Pip cards score what they show.", suit: "diamonds", rank: "5" },
-  { card: "Jack", value: "11", note: "", suit: "clubs", rank: "J" },
-  { card: "Queen", value: "12", note: "", suit: "hearts", rank: "Q" },
-  { card: "Red King (♥ ♦)", value: "13", note: "The most expensive card you can hold.", suit: "diamonds", rank: "K" },
+const values: Array<{
+  card: string;
+  value: string;
+  cards: Array<{ rank: string; suit: string }>;
+}> = [
+  { card: "Red King (♥ ♦)", value: "−1", cards: [{ rank: "K", suit: "diamonds" }] },
+  { card: "Joker", value: "0", cards: [{ rank: "JOKER", suit: "joker" }] },
+  { card: "Ace", value: "1", cards: [{ rank: "A", suit: "hearts" }] },
+  { card: "2 – 10", value: "Face value", cards: [{ rank: "5", suit: "diamonds" }] },
+  { card: "Face cards (except Red King)", value: "10", cards: [
+    { rank: "J", suit: "clubs" },
+    { rank: "Q", suit: "hearts" },
+    { rank: "K", suit: "spades" },
+  ] },
 ];
 ---
 
@@ -249,7 +255,6 @@ const values = [
               <tr class="bg-[color-mix(in_oklab,var(--color-gold-400)_15%,transparent)]">
                 <th class="px-4 py-3 font-display tracking-[0.15em] text-xs text-[var(--color-gold-200)]">Card</th>
                 <th class="px-4 py-3 font-display tracking-[0.15em] text-xs text-[var(--color-gold-200)]">Value</th>
-                <th class="px-4 py-3 font-display tracking-[0.15em] text-xs text-[var(--color-gold-200)] hidden sm:table-cell">Notes</th>
                 <th class="px-4 py-3"></th>
               </tr>
             </thead>
@@ -258,8 +263,13 @@ const values = [
                 <tr class={i % 2 ? "bg-[color-mix(in_oklab,var(--color-felt-700)_25%,transparent)]" : ""}>
                   <td class="px-4 py-3 font-medium">{v.card}</td>
                   <td class="px-4 py-3 font-display text-[var(--color-gold-50)] text-lg">{v.value}</td>
-                  <td class="px-4 py-3 text-[var(--color-ivory)]/80 text-sm hidden sm:table-cell">{v.note}</td>
-                  <td class="px-4 py-3"><Card rank={v.rank as any} suit={v.suit as any} size="xs" tilt={false} /></td>
+                  <td class="px-4 py-3">
+                    <div class="flex gap-1.5 items-center">
+                      {v.cards.map((c) => (
+                        <Card rank={c.rank as any} suit={c.suit as any} size="xs" tilt={false} />
+                      ))}
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>

@@ -515,12 +515,11 @@ export default function WalkThrough() {
       </AnimatePresence>
 
       <div
-        style={{
-          position: "relative",
-          width: "100%",
-          height: 760,
-          margin: "0 auto",
-        }}
+        className="scene-fitter"
+        style={{ "--scene-w": 720, "--scene-h": 760 } as Record<string, string | number>}
+      >
+      <div
+        className="scene"
         aria-label="A Cambio walkthrough table view."
       >
         <div
@@ -566,6 +565,7 @@ export default function WalkThrough() {
             />
           ))}
         </div>
+      </div>
       </div>
 
       <div

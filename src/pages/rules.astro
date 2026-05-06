@@ -15,7 +15,7 @@ const toc = [
   { id: "opening", label: "Opening peek" },
   { id: "turn", label: "Turn structure" },
   { id: "values", label: "Card values" },
-  { id: "activatable", label: "Activatable cards" },
+  { id: "power", label: "Power cards" },
   { id: "snap", label: "Snap" },
   { id: "cambio", label: "Calling Cambio" },
 ];
@@ -41,10 +41,7 @@ const values: Array<{
   <div class="max-w-6xl mx-auto px-6 pt-20 pb-10">
     <div class="eyebrow filigree">The rules</div>
     <h1 class="font-display text-5xl sm:text-6xl text-[var(--color-gold-50)] mt-4 leading-tight">How to play Cambio</h1>
-    <p class="mt-4 text-[var(--color-ivory)]/85 max-w-2xl text-lg leading-relaxed">
-      A complete, reorganised guide to the modern game — from setup and turn structure to the
-      finer art of snap and penalties.
-    </p>
+
   </div>
 
   <div class="max-w-6xl mx-auto px-6 grid lg:grid-cols-[220px_1fr] gap-12">
@@ -274,11 +271,11 @@ const values: Array<{
         </div>
       </Section>
 
-      <Section id="activatable" eyebrow="Power cards" title="Activatable cards">
+      <Section id="power" eyebrow="The four effects" title="Power cards">
         <p>
-          Four card types do something special when <strong>discarded by the active player</strong>
+          Four power cards do something special when <strong>discarded by the active player</strong>
           on their turn (step 3 above). Each effect resolves before play continues. Cards added
-          to the discard pile via a <a href="#snap">snap</a> do <strong>not</strong> activate.
+          to the discard pile via a <a href="#snap">snap</a> have <strong>no effect</strong>.
         </p>
 
         <div class="not-prose space-y-5 my-8">
@@ -306,9 +303,9 @@ const values: Array<{
         </div>
 
         <Callout variant="tip">
-          Activation only fires when a card is discarded by the active player on their turn —
-          never when a card is snapped onto the pile. While you're mid-swap (Jack, Queen, or
-          King), no other player may attempt to snap until your swap is complete.
+          A power card's effect only fires when it's discarded by the active player on their
+          turn — never when a card is snapped onto the pile. While you're mid-swap (Jack,
+          Queen, or King), no other player may attempt to snap until your swap is complete.
         </Callout>
       </Section>
 
@@ -330,8 +327,8 @@ const values: Array<{
             theirs stays the same size but gains an unknown card.
           </li>
           <li>
-            <strong>A snapped card never activates</strong>, even if it's a power card —
-            activation only fires on a normal discard (step 3 of the active player's turn).
+            <strong>A snapped card has no effect</strong>, even if it's a power card —
+            effects only fire on a normal discard (step 3 of the active player's turn).
           </li>
           <li>You may never snap directly from the deck.</li>
         </ul>

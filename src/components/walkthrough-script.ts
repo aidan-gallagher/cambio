@@ -43,6 +43,9 @@ export interface BoardState {
   activeSeat: SeatId | null;
   /** Card the active player is currently holding off-grid (just drawn). */
   heldCard?: CardId | null;
+  /** The card that's currently on top of the deck (next to be drawn).
+   *  Used for the click-to-peek-deck learning aid. */
+  deckTop?: CardId | null;
   /** Slot keys ("you-2") that are face-up during this step. */
   revealedSlots?: string[];
   /** Slot keys to highlight with a glow — independent of revelation. */
@@ -147,7 +150,7 @@ export const STEPS: Step[] = (() => {
     caption: "The deck is shuffled and four cards are dealt face-down to each player in a 2×2 grid.",
     reasoning:
       "All cards are face-down. From here on, you'll only see a card when the player whose turn it is is actually looking at it.",
-    board: board(grids, { deckCount: deck, discard: pile, activeSeat: null }),
+    board: board(grids, { deckCount: deck, discard: pile, activeSeat: null, deckTop: c("7", "clubs") }),
   });
 
   // 1 — Opening peek
@@ -159,6 +162,7 @@ export const STEPS: Step[] = (() => {
       deckCount: deck,
       discard: pile,
       activeSeat: null,
+      deckTop: c("7", "clubs"),
       revealedSlots: [
         "you-2", "you-3",
         "west-2", "west-3",
@@ -185,10 +189,11 @@ export const STEPS: Step[] = (() => {
       discard: pile,
       activeSeat: "you",
       heldCard: c("7", "clubs"),
+      deckTop: c("8", "diamonds"),
     }),
   });
 
-  // 3 — Sam discards the 7, activation peeks his top-left (Q♥)
+  // 3 — Sam discards the 7; the effect peeks his top-left (Q♥)
   pile = [...pile, c("7", "clubs")];
   out.push({
     caption: "Sam discards the 7♣ — \"see your fate\" fires. He peeks his top-left… Q♥. Heavy.",
@@ -198,6 +203,7 @@ export const STEPS: Step[] = (() => {
       deckCount: deck,
       discard: pile,
       activeSeat: "you",
+      deckTop: c("8", "diamonds"),
       revealedSlots: ["you-0"],
       highlights: ["you-0"],
     }),
@@ -214,6 +220,7 @@ export const STEPS: Step[] = (() => {
       discard: pile,
       activeSeat: "west",
       heldCard: c("8", "diamonds"),
+      deckTop: c("J", "clubs"),
     }),
   });
 
@@ -224,11 +231,12 @@ export const STEPS: Step[] = (() => {
   out.push({
     caption: "Lisa discards the 8♦, peeks her top-left… it's an 8♠. She snaps it down on top of her own discard.",
     reasoning:
-      "Two rules in one beat. \"See your fate\" lets Lisa peek her top-left — she finds an 8♠. And because the discarded player can snap their own discard, she instantly slaps the 8♠ down on top of the 8♦. Her grid shrinks from four cards to three, and her score drops by 8. Note that the snap itself doesn't fire any activation — only the original discard did.",
+      "Two rules in one beat. \"See your fate\" lets Lisa peek her top-left — she finds an 8♠. And because the discarded player can snap their own discard, she instantly slaps the 8♠ down on top of the 8♦. Her grid shrinks from four cards to three, and her score drops by 8. Note that the snap itself has no effect — only the original discard fires.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
       activeSeat: "west",
+      deckTop: c("J", "clubs"),
     }),
   });
 
@@ -243,6 +251,7 @@ export const STEPS: Step[] = (() => {
       discard: pile,
       activeSeat: "north",
       heldCard: c("J", "clubs"),
+      deckTop: c("9", "hearts"),
     }),
   });
 
@@ -257,6 +266,7 @@ export const STEPS: Step[] = (() => {
       deckCount: deck,
       discard: pile,
       activeSeat: "north",
+      deckTop: c("9", "hearts"),
       highlights: ["you-0", "west-2"],
     }),
   });
@@ -272,6 +282,7 @@ export const STEPS: Step[] = (() => {
       discard: pile,
       activeSeat: "east",
       heldCard: c("9", "hearts"),
+      deckTop: c("K", "spades"),
     }),
   });
 
@@ -285,6 +296,7 @@ export const STEPS: Step[] = (() => {
       deckCount: deck,
       discard: pile,
       activeSeat: "east",
+      deckTop: c("K", "spades"),
       revealedSlots: ["north-0"],
       highlights: ["north-0"],
     }),
@@ -295,12 +307,13 @@ export const STEPS: Step[] = (() => {
   out.push({
     caption: "Sam's turn 2. He draws a K♠.",
     reasoning:
-      "Kings — both colours — do two things in one activation: peek any card, and swap any card with one of your own. Sam can plan this carefully.",
+      "Kings — both colours — do two things in one go: peek any card, and swap any card with one of your own. Sam can plan this carefully.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
       activeSeat: "you",
       heldCard: c("K", "spades"),
+      deckTop: c("A", "clubs"),
     }),
   });
 
@@ -314,6 +327,7 @@ export const STEPS: Step[] = (() => {
       deckCount: deck,
       discard: pile,
       activeSeat: "you",
+      deckTop: c("A", "clubs"),
       revealedSlots: ["east-2"],
       highlights: ["east-2"],
     }),
@@ -329,6 +343,7 @@ export const STEPS: Step[] = (() => {
       deckCount: deck,
       discard: pile,
       activeSeat: "you",
+      deckTop: c("A", "clubs"),
       highlights: ["you-3", "east-2"],
     }),
   });
@@ -344,6 +359,7 @@ export const STEPS: Step[] = (() => {
       deckCount: deck,
       discard: pile,
       activeSeat: "west",
+      deckTop: c("6", "spades"),
     }),
   });
 
@@ -353,11 +369,12 @@ export const STEPS: Step[] = (() => {
   out.push({
     caption: "SNAP. Sam slaps his A♥ down — he remembered it was his bottom-left.",
     reasoning:
-      "Snap eliminates the card from his grid without replacing it. Sam goes from 4 cards to 3. A snapped card never activates, even if it were a power card — only a normal discard does.",
+      "Snap eliminates the card from his grid without replacing it. Sam goes from 4 cards to 3. A snapped card has no effect, even if it were a power card — only a normal discard fires.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
       activeSeat: "west",
+      deckTop: c("6", "spades"),
     }),
   });
 
@@ -371,6 +388,7 @@ export const STEPS: Step[] = (() => {
       deckCount: deck - 1,
       discard: pile,
       activeSeat: "west",
+      deckTop: c("3", "clubs"),
       revealedSlots: ["north-0"],
       highlights: ["north-0", "north-4"],
     }),
@@ -386,6 +404,7 @@ export const STEPS: Step[] = (() => {
       deckCount: deck,
       discard: pile,
       activeSeat: "north",
+      deckTop: c("3", "clubs"),
     }),
   });
 
@@ -400,6 +419,7 @@ export const STEPS: Step[] = (() => {
       deckCount: deck,
       discard: pile,
       activeSeat: "east",
+      deckTop: c("6", "clubs"),
     }),
   });
 
@@ -414,6 +434,7 @@ export const STEPS: Step[] = (() => {
       deckCount: deck,
       discard: pile,
       activeSeat: "you",
+      deckTop: c("3", "spades"),
     }),
   });
 

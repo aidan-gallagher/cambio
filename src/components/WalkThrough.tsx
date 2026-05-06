@@ -224,24 +224,61 @@ function SeatLabel({
   );
 }
 
-function DeckAndDiscard({ board }: { board: BoardState }) {
+function DeckAndDiscard({
+  board,
+  deckRevealed,
+  onDeckClick,
+}: {
+  board: BoardState;
+  deckRevealed: boolean;
+  onDeckClick: () => void;
+}) {
   const top = board.discard[board.discard.length - 1];
+  const deckTop = board.deckTop;
+  const deckLayers = Math.min(
+    4,
+    Math.max(1, Math.floor(board.deckCount / 8)),
+  );
   return (
     <div style={{ position: "absolute", left: 0, top: 0 }}>
       {/* deck stack */}
-      <div style={{ position: "absolute", left: -36, top: -36 }}>
-        {Array.from({ length: Math.min(4, Math.max(1, Math.floor(board.deckCount / 8))) }).map((_, i) => (
+      <div
+        onClick={deckTop ? onDeckClick : undefined}
+        style={{
+          position: "absolute",
+          left: -36,
+          top: -36,
+          width: 56 + (deckLayers - 1) * 1.5,
+          height: Math.round(56 * 1.45) + (deckLayers - 1) * 1.5,
+          cursor: deckTop ? "pointer" : "default",
+        }}
+      >
+        {/* lower layers — always face-down */}
+        {Array.from({ length: deckLayers - 1 }).map((_, i) => (
           <div
             key={i}
             style={{
               position: "absolute",
-              top: -i * 1.5,
-              left: -i * 1.5,
+              top: -(i + 1) * 1.5,
+              left: -(i + 1) * 1.5,
             }}
           >
             <CardBack width={56} />
           </div>
         ))}
+        {/* topmost card — flips on click if there is a known top */}
+        <div style={{ position: "absolute", top: 0, left: 0 }}>
+          {deckTop ? (
+            <FlipCard
+              width={56}
+              flipped={deckRevealed}
+              back={<CardBack width={56} />}
+              face={<CardFace width={56} rank={deckTop.rank} suit={deckTop.suit} />}
+            />
+          ) : (
+            <CardBack width={56} />
+          )}
+        </div>
       </div>
       {/* discard pile (top card always shown face-up; empty slot if pile is empty) */}
       <div style={{ position: "absolute", left: 36, top: -36 }}>
@@ -336,15 +373,22 @@ function HeldCard({ board }: { board: BoardState }) {
 export default function WalkThrough() {
   const [step, setStep] = useState(0);
   const [userRevealed, setUserRevealed] = useState<Set<string>>(new Set());
+  const [deckRevealed, setDeckRevealed] = useState(false);
   const total = STEPS.length;
 
-  const go = (delta: number) =>
+  // Step navigation also clears any user-toggled card peeks so they
+  // don't leak across steps.
+  const go = (delta: number) => {
     setStep((s) => Math.max(0, Math.min(total - 1, s + delta)));
-
-  // Clear user-clicked reveals whenever the step changes.
-  useEffect(() => {
     setUserRevealed(new Set());
-  }, [step]);
+    setDeckRevealed(false);
+  };
+
+  const goTo = (s: number) => {
+    setStep(Math.max(0, Math.min(total - 1, s)));
+    setUserRevealed(new Set());
+    setDeckRevealed(false);
+  };
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -356,14 +400,15 @@ export default function WalkThrough() {
         go(-1);
       } else if (e.key === "Home") {
         e.preventDefault();
-        setStep(0);
+        goTo(0);
       } else if (e.key === "End") {
         e.preventDefault();
-        setStep(total - 1);
+        goTo(total - 1);
       }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [total]);
 
   const onCardClick = (slotKey: string) => {
@@ -374,6 +419,8 @@ export default function WalkThrough() {
       return next;
     });
   };
+
+  const onDeckClick = () => setDeckRevealed((v) => !v);
 
   const current = STEPS[step];
   const board = current.board;
@@ -417,7 +464,7 @@ export default function WalkThrough() {
           }}
         />
         <button
-          onClick={() => setStep(0)}
+          onClick={() => goTo(0)}
           style={{
             fontFamily: "Cinzel, serif",
             letterSpacing: "0.18em",
@@ -496,7 +543,7 @@ export default function WalkThrough() {
             height: 0,
           }}
         >
-          <DeckAndDiscard board={board} />
+          <DeckAndDiscard board={board} deckRevealed={deckRevealed} onDeckClick={onDeckClick} />
           {(Object.keys(SEAT_LAYOUT) as SeatId[]).map((seat) => (
             <SeatGrid
               key={seat}

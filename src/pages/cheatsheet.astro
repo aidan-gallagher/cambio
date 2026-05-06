@@ -26,21 +26,19 @@ import Card from "~/components/Card.astro";
           <li class="flex justify-between"><span>Joker</span><span class="font-mono">0</span></li>
           <li class="flex justify-between"><span>Ace</span><span class="font-mono">1</span></li>
           <li class="flex justify-between"><span>2 – 10</span><span class="font-mono">face value</span></li>
-          <li class="flex justify-between"><span>Jack</span><span class="font-mono">10</span></li>
-          <li class="flex justify-between"><span>Queen</span><span class="font-mono">10</span></li>
-          <li class="flex justify-between"><span>Black King (♠ ♣)</span><span class="font-mono">10</span></li>
+          <li class="flex justify-between"><span>Face cards (except Red King)</span><span class="font-mono">10</span></li>
         </ul>
       </section>
 
       <section class="rounded-xl p-6" style="background: color-mix(in oklab, var(--color-felt-700) 35%, transparent); border:1px solid color-mix(in oklab, var(--color-gold-400) 25%, transparent);">
-        <h2 class="font-display text-xl text-[var(--color-gold-50)] mb-3">Activatable cards</h2>
+        <h2 class="font-display text-xl text-[var(--color-gold-50)] mb-3">Power cards</h2>
         <ul class="space-y-2 text-[0.98rem]">
           <li><strong>7 / 8</strong> — see your fate. Look at one of <em>your</em> own cards.</li>
           <li><strong>9 / 10</strong> — spy again. Look at one of <em>another player's</em> cards.</li>
           <li><strong>Jack / Queen</strong> — swap unseen. Blind-swap any two cards on the table.</li>
           <li><strong>Any King</strong> — peek and fling. Look at any one card, then swap any card with one of yours.</li>
         </ul>
-        <p class="text-[var(--color-ivory-dim)] text-sm mt-3 italic">Activation fires only on discard (step 3 of the active player's turn). Snapped cards don't activate.</p>
+        <p class="text-[var(--color-ivory-dim)] text-sm mt-3 italic">Effects fire only on discard (step 3 of the active player's turn). Snapped cards have no effect.</p>
       </section>
 
       <section class="rounded-xl p-6" style="background: color-mix(in oklab, var(--color-felt-700) 35%, transparent); border:1px solid color-mix(in oklab, var(--color-gold-400) 25%, transparent);">
@@ -48,7 +46,7 @@ import Card from "~/components/Card.astro";
         <ol class="space-y-2 text-[0.98rem] list-decimal list-inside">
           <li><strong>Draw</strong> the top card of the deck.</li>
           <li><strong>Decide</strong>: keep it (swap into your grid) or not.</li>
-          <li><strong>Discard</strong> your candidate face-up. Power cards activate.</li>
+          <li><strong>Discard</strong> your candidate face-up. The card's effect fires.</li>
         </ol>
         <p class="text-[var(--color-ivory-dim)] text-sm mt-3 italic">Or, instead, call <strong>Cambio</strong> to end the game for yourself.</p>
       </section>

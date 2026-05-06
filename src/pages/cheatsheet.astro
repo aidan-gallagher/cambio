@@ -40,7 +40,7 @@ import Card from "~/components/Card.astro";
           <li><strong>Jack / Queen</strong> — swap unseen. Blind-swap any two cards on the table.</li>
           <li><strong>Any King</strong> — peek and fling. Look at any one card, then swap any card with one of yours.</li>
         </ul>
-        <p class="text-[var(--color-ivory-dim)] text-sm mt-3 italic">Effects fire on any card placed face-up on the discard pile.</p>
+        <p class="text-[var(--color-ivory-dim)] text-sm mt-3 italic">Activation fires only on discard (step 3 of the active player's turn). Snapped cards don't activate.</p>
       </section>
 
       <section class="rounded-xl p-6" style="background: color-mix(in oklab, var(--color-felt-700) 35%, transparent); border:1px solid color-mix(in oklab, var(--color-gold-400) 25%, transparent);">
@@ -57,10 +57,8 @@ import Card from "~/components/Card.astro";
         <h2 class="font-display text-xl text-[var(--color-gold-50)] mb-3">Snap</h2>
         <ul class="space-y-1.5 text-[0.98rem]">
           <li>Anyone can snap the top discard with a same-rank card from the table.</li>
-          <li>Snap your own card → eliminate it (your array shrinks).</li>
+          <li>Snap your own card → eliminate it (your grid shrinks).</li>
           <li>Snap another player's card → transfer one of yours into their slot.</li>
-          <li>Each discard may be snapped <strong>at most once</strong>.</li>
-          <li>No snapping from the deck. No snapping during another player's swap.</li>
           <li>Wrong snap → take the card back <em>and</em> draw a penalty card.</li>
         </ul>
       </section>
@@ -68,21 +66,12 @@ import Card from "~/components/Card.astro";
       <section class="rounded-xl p-6" style="background: color-mix(in oklab, var(--color-felt-700) 35%, transparent); border:1px solid color-mix(in oklab, var(--color-gold-400) 25%, transparent);">
         <h2 class="font-display text-xl text-[var(--color-gold-50)] mb-3">Game end</h2>
         <ul class="space-y-1.5 text-[0.98rem]">
-          <li>Game ends when someone calls <strong>Cambio</strong> (or knocks).</li>
+          <li>Game ends when someone calls <strong>Cambio</strong>.</li>
           <li>Each remaining player takes one final turn, then everyone reveals.</li>
           <li>Lowest total wins.</li>
         </ul>
       </section>
 
-      <section class="rounded-xl p-6" style="background: color-mix(in oklab, var(--color-felt-700) 35%, transparent); border:1px solid color-mix(in oklab, var(--color-gold-400) 25%, transparent);">
-        <h2 class="font-display text-xl text-[var(--color-gold-50)] mb-3">Etiquette</h2>
-        <ul class="space-y-1.5 text-[0.98rem]">
-          <li>One hand. One card at a time (except mid-swap).</li>
-          <li>Reveal discards so all players see at the same instant.</li>
-          <li>Don't throw cards. Don't tabletalk specific values.</li>
-          <li>House rules trump everything else here.</li>
-        </ul>
-      </section>
     </div>
 
     <div class="mt-10 flex justify-center gap-2 no-print">

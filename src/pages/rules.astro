@@ -17,7 +17,6 @@ const toc = [
   { id: "values", label: "Card values" },
   { id: "activatable", label: "Activatable cards" },
   { id: "snap", label: "Snap" },
-  { id: "penalties", label: "Penalties" },
   { id: "cambio", label: "Calling Cambio" },
 ];
 
@@ -55,7 +54,7 @@ const values: Array<{
       <Section id="overview" eyebrow="The shape of the game" title="Overview">
         <p>
           Cambio is a draw-and-discard game for two or more players (best with four to six).
-          Each player keeps a small face-down array of cards and tries to hold the lowest
+          Each player keeps a small face-down grid of cards and tries to hold the lowest
           possible total when someone declares the game over.
         </p>
         <p>
@@ -228,7 +227,7 @@ const values: Array<{
           {[
             { n: "1", t: "Draw", b: "Take the top card of the deck and look at it." },
             { n: "2", t: "Decide", b: "Either keep the new card (swap it into your grid; the card you displace becomes your discard candidate) or don't (the card you just drew is the candidate)." },
-            { n: "3", t: "Discard", b: "Place your candidate face-up on the discard pile. If it's a power card (7, 8, 9, 10, J, Q, Red K), its effect fires now." },
+            { n: "3", t: "Discard", b: "Place your candidate face-up on the discard pile. If it's a power card (7, 8, 9, 10, J, Q, K), its effect fires now." },
           ].map((o) => (
             <div
               class="rounded-xl p-5"
@@ -277,18 +276,19 @@ const values: Array<{
 
       <Section id="activatable" eyebrow="Power cards" title="Activatable cards">
         <p>
-          Four card types do something special when placed face-up on the discard pile. Each
-          effect resolves before play continues.
+          Four card types do something special when <strong>discarded by the active player</strong>
+          on their turn (step 3 above). Each effect resolves before play continues. Cards added
+          to the discard pile via a <a href="#snap">snap</a> do <strong>not</strong> activate.
         </p>
 
         <div class="not-prose space-y-5 my-8">
           <RuleCard title="Seven or Eight" rank="7" suit="diamonds" rankAlt="8" suitAlt="clubs" value="See your fate" tagline="Seven or eight — see your fate.">
-            Look at one card from <strong>your own</strong> array. Pick a face-down card,
+            Look at one card from <strong>your own</strong> grid. Pick a face-down card,
             peek at it privately, and return it.
           </RuleCard>
 
           <RuleCard title="Nine or Ten" rank="9" suit="spades" rankAlt="10" suitAlt="hearts" value="Spy again" tagline="Nine or ten — spy again.">
-            Look at one card from <strong>another player's</strong> array. Pick one of their
+            Look at one card from <strong>another player's</strong> grid. Pick one of their
             face-down cards, peek at it privately, and return it.
           </RuleCard>
 
@@ -306,9 +306,9 @@ const values: Array<{
         </div>
 
         <Callout variant="tip">
-          Activations resolve immediately when the card is discarded. While you're mid-swap
-          (Jack, Queen, or Black King), no other player may attempt to snap the discard until
-          your swap is complete.
+          Activation only fires when a card is discarded by the active player on their turn —
+          never when a card is snapped onto the pile. While you're mid-swap (Jack, Queen, or
+          King), no other player may attempt to snap until your swap is complete.
         </Callout>
       </Section>
 
@@ -322,12 +322,16 @@ const values: Array<{
         <ul>
           <li>
             If you snap with one of your own cards, that card joins the discard pile and
-            <strong> you do not replace it</strong>. Your array shrinks by one.
+            <strong>you do not replace it</strong>. Your grid shrinks by one.
           </li>
           <li>
             If you snap another player's card, you <strong>transfer one of your own cards
-            into their array</strong> in the empty slot you just created. Your array shrinks;
+            into their grid</strong> in the empty slot you just created. Your grid shrinks;
             theirs stays the same size but gains an unknown card.
+          </li>
+          <li>
+            <strong>A snapped card never activates</strong>, even if it's a power card —
+            activation only fires on a normal discard (step 3 of the active player's turn).
           </li>
           <li>You may never snap directly from the deck.</li>
         </ul>
@@ -336,7 +340,7 @@ const values: Array<{
         <p>
           If you turn over a card to snap but get it wrong, the card stays where it is — and
           you draw a new face-down card from the top of the deck as a penalty, growing your
-          array by one.
+          grid by one.
         </p>
 
 
@@ -349,7 +353,7 @@ const values: Array<{
       <Section id="cambio" eyebrow="Ending the game" title="Calling Cambio">
         <p>
           On your turn, instead of drawing, you may declare <strong>"Cambio"</strong>. You forfeit the rest of your turn. Each remaining player takes one
-          last turn, then everyone reveals their array and totals are scored.
+          last turn, then everyone reveals their hand and totals are scored.
         </p>
         <p>
           You cannot call Cambio out of turn. The call must be made before you touch the deck.

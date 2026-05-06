@@ -96,6 +96,7 @@ function SeatGrid({
   return (
     <div style={{ position: "absolute", left: cfg.center.x, top: cfg.center.y }}>
       {state.grid.map((card, i) => {
+        if (card === null) return null;
         const off = offsets[i] ?? { x: 0, y: 0 };
         const rotated = rotatePt(off, cfg.rotate);
         const tilt = (i % 2 === 0 ? -1.5 : 1.5);
@@ -108,7 +109,7 @@ function SeatGrid({
         return (
           <motion.div
             layout
-            key={`${seat}-${card.rank}-${card.suit}-${i}`}
+            key={`${seat}-${card.rank}-${card.suit}`}
             initial={false}
             animate={{
               x: rotated.x - cfg.cardW / 2,

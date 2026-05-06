@@ -30,7 +30,9 @@ export interface CardId {
 }
 
 export interface SeatState {
-  grid: CardId[];
+  /** Slot-stable grid: removed cards become null so the remaining cards
+   *  don't shift. Penalty cards append to the end. */
+  grid: (CardId | null)[];
 }
 
 export interface BoardState {
@@ -74,7 +76,10 @@ export function scoreOf(c: CardId): number {
 }
 
 export function totalOf(seat: SeatState): number {
-  return seat.grid.reduce((sum, c) => sum + scoreOf(c), 0);
+  return seat.grid.reduce<number>(
+    (sum, c) => sum + (c === null ? 0 : scoreOf(c)),
+    0,
+  );
 }
 
 /* ----------------------------------------------------------------------- */
@@ -84,7 +89,8 @@ export function totalOf(seat: SeatState): number {
 const c = (rank: string, suit: Suit): CardId => ({ rank, suit });
 
 // Initial deal — slot order TL, TR, BL, BR.
-const INITIAL: Record<SeatId, CardId[]> = {
+type Slot = CardId | null;
+const INITIAL: Record<SeatId, Slot[]> = {
   you:   [c("4", "hearts"),    c("3", "clubs"),     c("A", "hearts"),    c("6", "diamonds")],
   west:  [c("Q", "spades"),    c("4", "diamonds"),  c("10", "clubs"),    c("4", "spades")],
   north: [c("10", "spades"),   c("9", "diamonds"),  c("4", "clubs"),     c("7", "spades")],
@@ -94,7 +100,7 @@ const INITIAL: Record<SeatId, CardId[]> = {
 const INITIAL_DECK_COUNT = 36;
 
 function board(
-  grids: Record<SeatId, CardId[]>,
+  grids: Record<SeatId, Slot[]>,
   opts: Omit<BoardState, "seats">,
 ): BoardState {
   return {
@@ -108,29 +114,30 @@ function board(
   };
 }
 
-function withSlot(grids: Record<SeatId, CardId[]>, seat: SeatId, index: number, card: CardId): Record<SeatId, CardId[]> {
+function withSlot(grids: Record<SeatId, Slot[]>, seat: SeatId, index: number, card: CardId): Record<SeatId, Slot[]> {
   const next = { ...grids };
   next[seat] = next[seat].map((existing, i) => (i === index ? card : existing));
   return next;
 }
 
-function appendCard(grids: Record<SeatId, CardId[]>, seat: SeatId, card: CardId): Record<SeatId, CardId[]> {
+function appendCard(grids: Record<SeatId, Slot[]>, seat: SeatId, card: CardId): Record<SeatId, Slot[]> {
   const next = { ...grids };
   next[seat] = [...next[seat], card];
   return next;
 }
 
-function removeSlot(grids: Record<SeatId, CardId[]>, seat: SeatId, index: number): Record<SeatId, CardId[]> {
+/** Slot-stable removal: leaves a null at the index instead of compacting. */
+function removeSlot(grids: Record<SeatId, Slot[]>, seat: SeatId, index: number): Record<SeatId, Slot[]> {
   const next = { ...grids };
-  next[seat] = next[seat].filter((_, i) => i !== index);
+  next[seat] = next[seat].map((card, i) => (i === index ? null : card));
   return next;
 }
 
 function swapSlots(
-  grids: Record<SeatId, CardId[]>,
+  grids: Record<SeatId, Slot[]>,
   a: { seat: SeatId; index: number },
   b: { seat: SeatId; index: number },
-): Record<SeatId, CardId[]> {
+): Record<SeatId, Slot[]> {
   const next = { ...grids };
   const cardA = next[a.seat][a.index];
   const cardB = next[b.seat][b.index];
@@ -287,12 +294,12 @@ export const STEPS: Step[] = (() => {
     }),
   });
 
-  // 9 — Lisa's FAILED SNAP — slaps her TL (Q♠) thinking it's a 10
+  // 9 — Lisa's FAILED SNAP — slaps her TL (Q♠) thinking it's where her known 10 lives
   grids = appendCard(grids, "west", c("8", "clubs"));
   out.push({
-    caption: "Lisa lunges to snap. She slaps her top-left down thinking it's a 10 — but it's a Q♠. Wrong rank, failed snap.",
+    caption: "Lisa lunges to snap. She slaps her top-left down — but it's a Q♠. Wrong card, failed snap.",
     reasoning:
-      "Lisa never learned what was at her top-left, but she gambled — there's a 10 on the discard pile, and she has a one-in-thirteen chance any unknown card is a 10. She lost. The Q♠ stays where it is (now visibly a Q to anyone watching), and Lisa is given a face-down penalty card from the top of the deck. Her grid grows 4 → 5.",
+      "Lisa knew she had a 10 in her grid from the opening peek, but she misremembered the slot — her actual 10♣ is at her bottom-left, not her top-left. The Q♠ stays where it is (now visibly a Q to anyone watching). Lisa draws a face-down penalty card and her grid grows 4 → 5.",
     board: board(grids, {
       deckCount: deck - 1,
       discard: pile,
@@ -345,7 +352,7 @@ export const STEPS: Step[] = (() => {
     grids = {
       ...grids,
       east: grids.east.map((card, i) => (i === 0 ? bobsGift : card)),
-      north: grids.north.filter((_, i) => i !== 1),
+      north: grids.north.map((card, i) => (i === 1 ? null : card)),
     };
   }
   out.push({

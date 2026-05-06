@@ -150,6 +150,27 @@ a:hover { color: var(--color-gold-50); }
   box-shadow: 0 30px 50px -20px rgba(0,0,0,0.6), 0 0 0 1px var(--color-gold-400);
 }
 
+/* Scene fitter — keeps an absolutely-positioned scene at its natural
+   pixel coordinates while scaling it down to fit narrow viewports.
+   Set --scene-w and --scene-h on .scene-fitter to the natural pixel
+   dimensions of the inner scene (no units). */
+.scene-fitter {
+  width: min(100%, calc(var(--scene-w) * 1px));
+  aspect-ratio: var(--scene-w) / var(--scene-h);
+  container-type: inline-size;
+  margin: 0 auto;
+  position: relative;
+}
+.scene-fitter > .scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(var(--scene-w) * 1px);
+  height: calc(var(--scene-h) * 1px);
+  transform-origin: top left;
+  transform: scale(min(1, calc(100cqw / (var(--scene-w) * 1px))));
+}
+
 @media print {
   body, html { background: white !important; color: black !important; }
   body::before { display: none; }

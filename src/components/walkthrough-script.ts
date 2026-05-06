@@ -93,7 +93,7 @@ type Slot = CardId | null;
 const INITIAL: Record<SeatId, Slot[]> = {
   you:   [c("4", "hearts"),    c("3", "clubs"),     c("A", "hearts"),    c("6", "diamonds")],
   west:  [c("Q", "spades"),    c("4", "diamonds"),  c("10", "clubs"),    c("4", "spades")],
-  north: [c("10", "spades"),   c("9", "diamonds"),  c("4", "clubs"),     c("7", "spades")],
+  north: [c("10", "spades"),   c("6", "clubs"),     c("5", "spades"),    c("10", "hearts")],
   east:  [c("7", "clubs"),     c("7", "diamonds"),  c("2", "diamonds"),  c("J", "hearts")],
 };
 
@@ -164,7 +164,7 @@ export const STEPS: Step[] = (() => {
   out.push({
     caption: "Opening peek. Every player privately looks at their own bottom two cards.",
     reasoning:
-      "Each player gets exactly one free peek before play begins — their two bottom cards. After this, no more free looks. From now on the only way to learn a card is via a power-card effect or by watching what other people discard.",
+      "Each player gets exactly one free peek before play begins — their two bottom cards. Sam now privately knows A♥ and 6♦; Lisa knows 10♣ and 4♠; Bob knows 5♠ and 10♥ (and that 10♥ is about to matter); Alice knows 2♦ and J♥. After this, no more free looks.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -190,7 +190,7 @@ export const STEPS: Step[] = (() => {
   out.push({
     caption: "Sam's turn. He draws an 8♦.",
     reasoning:
-      "The first three actions of every turn are draw, decide, discard. Sam's drawn card is shown above his seat — that's the only card visible right now.",
+      "Sam already knows three of his cards add up to only 7 (the unknown TL plus A♥ + 6♦). The 8 he just drew is heavier than an average unknown — and 8 is a power card. Discarding it directly trades zero score for a free private peek.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -200,12 +200,12 @@ export const STEPS: Step[] = (() => {
     }),
   });
 
-  // 3 — Sam discards 8♦; sees-your-fate peeks his top-left (4♥)
+  // 3 — Sam discards 8♦, peeks own TL = 4♥
   pile = [...pile, c("8", "diamonds")];
   out.push({
-    caption: "Sam discards the 8♦ — \"see your fate\" fires. He peeks his top-left… 4♥. Already low.",
+    caption: "Sam discards the 8♦ — \"see your fate\" fires. He peeks his top-left: 4♥.",
     reasoning:
-      "Sevens and eights let the discarding player look at one of their own cards. Sam now privately knows three of his four cards (top-left 4♥, bottom-left A♥, bottom-right 6♦). His top-right is still a mystery.",
+      "Sam now privately knows three of his four cards (TL 4♥, BL A♥, BR 6♦) — total 11 plus an unknown TR. He's already deep in low-hand territory.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -219,9 +219,9 @@ export const STEPS: Step[] = (() => {
   // 4 — Lisa draws 3♠
   deck--;
   out.push({
-    caption: "Lisa's turn. She draws a 3♠ — a low card she'd love to keep.",
+    caption: "Lisa's turn. She draws a 3♠ — and she knows there's a 10♣ sitting in her grid.",
     reasoning:
-      "Lisa knows her bottom two cards from the opening peek (10♣ and 4♠). She doesn't know either of her top cards, but she trusts they're probably worse than a 3 — and the 3 isn't a power card, so discarding it directly would do nothing useful.",
+      "From the opening peek Lisa knows her bottom-left is a 10♣. A 3 swapped into that exact slot is a guaranteed 7-point drop, and the displaced 10 is a power card — \"spy again\" — so she gets to peek an opponent on the way out. This is the textbook play.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -231,34 +231,36 @@ export const STEPS: Step[] = (() => {
     }),
   });
 
-  // 5 — Lisa swaps 3♠ into TR; old 4♦ to discard
-  grids = withSlot(grids, "west", 1, c("3", "spades"));
-  pile = [...pile, c("4", "diamonds")];
+  // 5 — Lisa swaps 3♠ into BL, displaces 10♣, spy peek Alice's BR = J♥
+  grids = withSlot(grids, "west", 2, c("3", "spades"));
+  pile = [...pile, c("10", "clubs")];
   out.push({
-    caption: "Lisa swaps the 3♠ into her top-right. The displaced 4♦ hits the discard pile — 4 isn't a power card, so no effect.",
+    caption: "Lisa swaps the 3♠ into her bottom-left. The 10♣ hits the discard, fires \"spy again,\" and Lisa peeks Alice's bottom-right → J♥.",
     reasoning:
-      "Lisa took a small gamble: the unknown card she just discarded turned out to be a 4 (worth 4), almost the same as the 3 she swapped in. Net change to her score: −1. The 4 sits face-up on the pile, ready to be snapped by anyone who has a matching 4.",
+      "Deterministic −7 on the swap, plus a free reconnaissance peek. She picks Alice's BR on a hunch. A J found there is exactly the kind of intelligence she'll be able to reuse later — remember this peek; it returns in step 13.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
       activeSeat: "west",
       deckTop: c("5", "hearts"),
-      highlights: ["west-1"],
+      revealedSlots: ["east-3"],
+      highlights: ["west-2", "east-3"],
     }),
   });
 
-  // 6 — Bob snaps his 4♣ onto the 4♦
-  grids = removeSlot(grids, "north", 2);
-  pile = [...pile, c("4", "clubs")];
+  // 6 — Bob snaps his known BR = 10♥ onto the 10♣
+  grids = removeSlot(grids, "north", 3);
+  pile = [...pile, c("10", "hearts")];
   out.push({
-    caption: "SNAP. Bob remembers his bottom-left is a 4♣ from the opening peek and slaps it onto the 4♦. His grid shrinks 4 → 3.",
+    caption: "SNAP. Bob remembers his bottom-right is a 10♥ from the opening peek and slaps it onto the 10♣. Successful snap — his grid shrinks 4 → 3.",
     reasoning:
-      "When you snap one of your own cards onto a same-rank discard, that card just leaves your grid — no replacement. Bob's score drops by 4 and his grid is now three cards: 10♠ (top-left, unknown to him), 9♦ (top-right, unknown), and 7♠ (bottom-right, peeked at opening).",
+      "Snapping your own card is pure value: the card just leaves your grid, no replacement, no power activation. Bob's score drops by 10 in a single instant. He now holds three cards: TL (10♠, unknown to him), TR (6♣, unknown), BL (5♠, peeked).",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
       activeSeat: "west",
       deckTop: c("5", "hearts"),
+      highlights: ["north-3"],
     }),
   });
 
@@ -267,7 +269,7 @@ export const STEPS: Step[] = (() => {
   out.push({
     caption: "Bob's turn. He draws a 5♥.",
     reasoning:
-      "Bob's grid is three cards: an unknown top-left, an unknown top-right, and a known 7♠ at bottom-right. Swapping the 5♥ in trades a small known card for a small unknown — but if the displaced card is a power card, the activation might be worth more than the score change.",
+      "Bob's only known card is BL = 5♠. Swapping the 5♥ into BL is a no-op. Discarding directly does nothing (5 isn't a power card). His best line is to swap into one of the unknowns: about a 50% chance of triggering a power on the way out, and the displaced card is on average roughly a 6 — a small expected gain. He picks TL.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -277,229 +279,145 @@ export const STEPS: Step[] = (() => {
     }),
   });
 
-  // 8 — Bob swaps 5♥ into his TL (slot 0); the displaced 10♠ activates "spy again"
+  // 8 — Bob swaps 5♥ into TL, displaces 10♠, spy Alice's TL = 7♣
   grids = withSlot(grids, "north", 0, c("5", "hearts"));
   pile = [...pile, c("10", "spades")];
   out.push({
     caption: "Bob swaps the 5♥ into his top-left. The displaced 10♠ activates — \"spy again\" — and Bob peeks Alice's top-left → 7♣.",
     reasoning:
-      "Lucky for Bob: the displaced card was a 10♠ (worth 10, swapping it out drops his score by 5) AND it's a power card — so he gets to peek another player's card too. He picks Alice's top-left and sees a 7♣. Remember that — it'll matter shortly.",
+      "The gamble pays off: the unknown was a 10♠ (−5 score) AND a power card (free spy). Bob now knows his whole grid except TR — 5♥, 5♠, 10 dumped, plus a private read on Alice's TL. His total is 16 with one unknown.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
       activeSeat: "north",
       deckTop: c("8", "clubs"),
       revealedSlots: ["east-0"],
-      highlights: ["east-0", "north-0"],
+      highlights: ["north-0", "east-0"],
     }),
   });
 
-  // 9 — Lisa's FAILED SNAP — slaps her TL (Q♠) thinking it's where her known 10 lives
+  // 9 — Lisa FAILED SNAP — slaps her BL forgetting she just dumped the 10
   grids = appendCard(grids, "west", c("8", "clubs"));
   out.push({
-    caption: "Lisa lunges to snap. She slaps her top-left down — but it's a Q♠. Wrong card, failed snap.",
+    caption: "Lisa lunges to snap. Muscle memory from the opening peek says \"10 in BL,\" she forgets she just swapped it out, and slaps her BL face-up — exposing her own 3♠. Failed snap.",
     reasoning:
-      "Lisa knew she had a 10 in her grid from the opening peek, but she misremembered the slot — her actual 10♣ is at her bottom-left, not her top-left. The Q♠ stays where it is (now visibly a Q to anyone watching). Lisa draws a face-down penalty card and her grid grows 4 → 5.",
+      "A real-world misplay: the opening-peek memory of \"10 in my bottom-left\" overrode her own most-recent move. The 3♠ stays publicly visible and Lisa draws a face-down penalty card (8♣) into a fifth slot. Her grid: TL Q♠, TR 4♦, BL 3♠ (visible), BR 4♠, slot 4 8♣.",
     board: board(grids, {
       deckCount: deck - 1,
       discard: pile,
       activeSeat: "north",
-      deckTop: c("K", "diamonds"),
-      revealedSlots: ["west-0"],
-      highlights: ["west-0", "west-4"],
+      deckTop: c("K", "clubs"),
+      revealedSlots: ["west-2"],
+      highlights: ["west-2", "west-4"],
     }),
   });
   deck--;
 
-  // 10 — Alice draws K♦ (Red King)
+  // 10 — Alice draws K♣
   deck--;
   out.push({
-    caption: "Alice's turn. She draws a K♦ — a Red King, worth −1.",
+    caption: "Alice's turn. She draws a K♣ — a Black King, worth 10 if kept but a peek-and-fling if discarded.",
     reasoning:
-      "Red Kings are the lowest-scoring card in the game. Any opportunity to put one in your grid is a gift. The King is also a power card, so whichever card she displaces will activate.",
+      "A Black King discarded is the most leveraged single card in the game. Alice already holds J♥ at her BR (10 points) — and Lisa's exposed 3♠ at BL is the lowest publicly-known card on the table. Trading her J for that 3 is a clean −7. The K is worth burning for the effect.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
       activeSeat: "east",
-      heldCard: c("K", "diamonds"),
-      deckTop: c("5", "diamonds"),
+      heldCard: c("K", "clubs"),
+      deckTop: c("2", "clubs"),
     }),
   });
 
-  // 11 — Alice swaps K♦ into TR; displaced 7♦ activates "see your fate"
-  grids = withSlot(grids, "east", 1, c("K", "diamonds"));
+  // 11 — Alice discards K♣, peek own TR = 7♦, swap her BR (J♥) ↔ Lisa's BL (3♠)
+  pile = [...pile, c("K", "clubs")];
+  grids = swapSlots(grids, { seat: "east", index: 3 }, { seat: "west", index: 2 });
+  out.push({
+    caption: "Alice discards the K♣ — peek-and-fling. She peeks her own TR (7♦, clearing her last unknown) and then swaps her BR (J♥) with Lisa's exposed BL (3♠). Alice −7, Lisa +7.",
+    reasoning:
+      "Peek-and-fling resolves as two independent effects. The peek goes to her own remaining unknown — she now sees her whole side. The swap targets the lowest publicly-known card on the table. The 3♠ moves face-up into Alice's BR; the J♥ slides face-down into Lisa's BL. Lisa, having seen Alice's BR was a J back in step 5, can now deduce her new BL is that J — if she's paying attention.",
+    board: board(grids, {
+      deckCount: deck,
+      discard: pile,
+      activeSeat: "east",
+      deckTop: c("2", "clubs"),
+      revealedSlots: ["east-1", "east-3"],
+      highlights: ["east-1", "east-3", "west-2"],
+    }),
+  });
+
+  // 12 — Sam calls Cambio
+  out.push({
+    caption: "Sam's turn 2. Instead of drawing, he calls CAMBIO.",
+    reasoning:
+      "Sam has 3 of 4 cards known: 4 + 1 + 6 = 11 plus an unknown TR. Even pessimistically that's ~17. By his read of the table — Lisa's five-card grid stuffed with unknowns, Bob's recent +5 swap then snap leaving him around 16, Alice having just absorbed a J — he's almost certainly the deepest in the basement. He locks it in.",
+    board: board(grids, {
+      deckCount: deck,
+      discard: pile,
+      activeSeat: "you",
+      deckTop: c("2", "clubs"),
+    }),
+  });
+
+  // 13 — Lisa final turn: draws 2♣, swaps into BL (deduced J♥). J fires
+  //      swap-unseen; she swaps her TL ↔ Alice's BR.
+  deck--;
+  grids = withSlot(grids, "west", 2, c("2", "clubs"));
+  pile = [...pile, c("J", "hearts")];
+  grids = swapSlots(grids, { seat: "west", index: 0 }, { seat: "east", index: 3 });
+  out.push({
+    caption: "Lisa's final turn. She draws a 2♣ and — connecting her step-5 spy to Alice's K-swap — deduces her BL is that J♥. She swaps the 2 in (−8). The displaced J fires swap-unseen, and she blind-swaps her unknown TL with Alice's exposed BR (3♠).",
+    reasoning:
+      "Two big drops in one turn, both enabled by attention paid earlier. The BL swap is a deterministic −8 (J → 2). The J's swap-unseen lets her dump an unknown for a known low: her TL was Q♠ (10), Alice's BR was 3♠ — Lisa drops another 7. Total turn: −15 on Lisa, +7 on Alice.",
+    board: board(grids, {
+      deckCount: deck,
+      discard: pile,
+      activeSeat: "west",
+      deckTop: c("7", "spades"),
+      revealedSlots: ["west-0"],
+      highlights: ["west-2", "west-0", "east-3"],
+    }),
+  });
+
+  // 14 — Bob final turn: draws 7♠, discards directly, see-your-fate, peek own TR = 6♣
+  deck--;
+  pile = [...pile, c("7", "spades")];
+  out.push({
+    caption: "Bob's final turn. He draws a 7♠. Every swap raises his score, so he discards directly — \"see your fate\" — and peeks his last unknown (TR → 6♣).",
+    reasoning:
+      "Bob's grid is TL 5♥, TR ?, BL 5♠. Swapping a 7 displaces a 5 or an unknown averaging 6 — every option pushes his score up. The 7's see-your-fate gives him the satisfaction of full hand knowledge (final: 16) but no further drop.",
+    board: board(grids, {
+      deckCount: deck,
+      discard: pile,
+      activeSeat: "north",
+      deckTop: c("4", "clubs"),
+      revealedSlots: ["north-1"],
+      highlights: ["north-1"],
+    }),
+  });
+
+  // 15 — Alice final turn: draws 4♣, swaps into TR (known 7♦),
+  //      7 fires see-your-fate, peek own TL = 7♣.
+  deck--;
+  grids = withSlot(grids, "east", 1, c("4", "clubs"));
   pile = [...pile, c("7", "diamonds")];
   out.push({
-    caption: "Alice swaps the Red King into her top-right. The displaced 7♦ activates — Alice peeks her own top-left → 7♣. She now knows all four of her cards.",
+    caption: "Alice's final turn. She draws a 4♣ and swaps it into her TR (known 7♦). The displaced 7 fires see-your-fate; she peeks her last unknown (TL → 7♣).",
     reasoning:
-      "Alice is having a great turn: she put a Red King (−1) into her grid, displacing a 7 (worth 7) — a 8-point swing. The 7's activation lets her peek one of her own cards; she chooses her top-left and learns it's a 7♣.",
+      "TR was her highest known card, so the swap is a deterministic −3. The 7's effect lets her clear her last unknown for closure — she now sees her whole side. Final: 7 + 4 + 2 + 10 = 23.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
       activeSeat: "east",
-      deckTop: c("5", "diamonds"),
       revealedSlots: ["east-0"],
       highlights: ["east-0", "east-1"],
     }),
   });
 
-  // 12 — Bob snaps Alice's TL 7♣ onto the discarded 7♦, transfers his 9♦ to Alice's TL
-  // Mutation: pile += east[0]; east[0] = north[1]; remove north[1].
-  {
-    const aliceTL = grids.east[0];
-    const bobsGift = grids.north[1];
-    pile = [...pile, aliceTL];
-    grids = {
-      ...grids,
-      east: grids.east.map((card, i) => (i === 0 ? bobsGift : card)),
-      north: grids.north.map((card, i) => (i === 1 ? null : card)),
-    };
-  }
-  out.push({
-    caption: "SNAP. Bob remembers from his earlier peek that Alice's top-left is also a 7. He slaps it onto the discarded 7♦, then transfers his own 9♦ into Alice's empty slot.",
-    reasoning:
-      "When you snap another player's card, you eliminate one of your own and give them a card from your grid in return. Bob picks his 9♦ — his highest remaining card — to dump on Alice. Bob's grid shrinks 3 → 2; Alice's stays at 4 but her top-left (which she just learned was a 7♣) is now an unknown 9♦.",
-    board: board(grids, {
-      deckCount: deck,
-      discard: pile,
-      activeSeat: "east",
-      deckTop: c("5", "diamonds"),
-      highlights: ["east-0"],
-    }),
-  });
-
-  // 13 — Sam's turn 2 — uneventful (kept as-is per request to leave step <14 alone)
-  deck--;
-  pile = [...pile, c("5", "diamonds")];
-  out.push({
-    caption: "Sam's turn 2. He draws a 5♦ and discards it directly — no swap, no useful activation.",
-    reasoning:
-      "Sam knows three of his four cards (4♥, A♥, 6♦) and his unknown top-right is probably worse than the 5 he just drew. But swapping is only worth it if you have evidence the unknown is heavier — Sam's playing it safe.",
-    board: board(grids, {
-      deckCount: deck,
-      discard: pile,
-      activeSeat: "you",
-      deckTop: c("K", "clubs"),
-    }),
-  });
-
-  // 14 — Lisa draws K♣ (held)
-  deck--;
-  out.push({
-    caption: "Lisa's turn 2. She draws a Black King — K♣.",
-    reasoning:
-      "A Black King is 10 points if you keep it, but discarded it triggers \"peek and fling\" — peek any card on the table, then swap any card with one of her own. Lisa wants to use the effect to dump her highest known card on someone else.",
-    board: board(grids, {
-      deckCount: deck,
-      discard: pile,
-      activeSeat: "west",
-      heldCard: c("K", "clubs"),
-      deckTop: c("2", "spades"),
-    }),
-  });
-
-  // 15 — Lisa discards K♣, peeks Sam's BR (6♦)
-  pile = [...pile, c("K", "clubs")];
-  out.push({
-    caption: "Lisa discards the K♣ — peek-and-fling fires. She peeks Sam's bottom-right and finds a 6♦.",
-    reasoning:
-      "Lisa's looking for a low card in another player's grid that she can dump her Q♠ (10) onto. A 6 is decent — better than her Q. She'll swap.",
-    board: board(grids, {
-      deckCount: deck,
-      discard: pile,
-      activeSeat: "west",
-      deckTop: c("2", "spades"),
-      revealedSlots: ["you-3"],
-      highlights: ["you-3"],
-    }),
-  });
-
-  // 16 — Lisa swaps her Q♠ ↔ Sam's BR
-  grids = swapSlots(grids, { seat: "west", index: 0 }, { seat: "you", index: 3 });
-  out.push({
-    caption: "Lisa swaps her Q♠ into Sam's bottom-right, taking the 6♦.",
-    reasoning:
-      "Lisa drops 4 points (10 → 6); Sam's score climbs by 4. The swap is observed, so Sam now knows his bottom-right is a Q♠ — useful to him on his final turn.",
-    board: board(grids, {
-      deckCount: deck,
-      discard: pile,
-      activeSeat: "west",
-      deckTop: c("2", "spades"),
-      highlights: ["west-0", "you-3"],
-    }),
-  });
-
-  // 17 — Bob calls Cambio
-  out.push({
-    caption: "Bob's turn 2. Instead of drawing, he calls CAMBIO.",
-    reasoning:
-      "Bob has only two cards left — 5♥ at top-left (he placed it himself) and 7♠ at bottom-right (peeked at opening). His known total is 12 and he thinks that's the lowest at the table. He locks it in. Each remaining player now takes one final turn.",
-    board: board(grids, {
-      deckCount: deck,
-      discard: pile,
-      activeSeat: "north",
-      deckTop: c("2", "spades"),
-    }),
-  });
-
-  // 18 — Alice's final turn — swap 2♠ for unknown TL (was 9♦); 9 activates spy-again, peeks Bob's BR
-  deck--;
-  grids = withSlot(grids, "east", 0, c("2", "spades"));
-  pile = [...pile, c("9", "diamonds")];
-  out.push({
-    caption: "Alice's final turn. She draws a 2♠ and swaps it into her top-left, displacing Bob's gift. The 9♦ activates \"spy again\" — Alice peeks Bob's bottom-right (a 7♠).",
-    reasoning:
-      "Alice suspected Bob's transferred card was high — Bob would have dumped his worst. Swapping a known 2 in for the unknown drops her score by 7. The 9 fires a spy on the way out and Alice glimpses one of Bob's cards, but the round's about to end.",
-    board: board(grids, {
-      deckCount: deck,
-      discard: pile,
-      activeSeat: "east",
-      deckTop: c("3", "diamonds"),
-      revealedSlots: ["north-3"],
-      highlights: ["east-0", "north-3"],
-    }),
-  });
-
-  // 19 — Sam's final turn — swap 3♦ for Q♠ (slot 3); Q♠ activates blind swap (Sam slot 1 ↔ Alice slot 1)
-  deck--;
-  grids = withSlot(grids, "you", 3, c("3", "diamonds"));
-  pile = [...pile, c("Q", "spades")];
-  grids = swapSlots(grids, { seat: "you", index: 1 }, { seat: "east", index: 1 });
-  out.push({
-    caption: "Sam's final turn. He swaps his drawn 3♦ into the Q♠ slot Lisa dumped on him. The Q♠ activates \"swap unseen\" — Sam blind-swaps his unknown top-right with Alice's known Red King.",
-    reasoning:
-      "Two big drops in one turn: swapping a 3 in for a known 10 is −7 deterministic. The discarded Q♠ activates a blind swap; Sam targets his last unknown (his top-right) and the publicly-known Red King at Alice's top-right. Sam loses an unknown ~6 on average and gains a known −1.",
-    board: board(grids, {
-      deckCount: deck,
-      discard: pile,
-      activeSeat: "you",
-      deckTop: c("5", "clubs"),
-      highlights: ["you-3", "you-1", "east-1"],
-    }),
-  });
-
-  // 20 — Lisa's final turn — swap 5♣ for 10♣ (slot 2); 10 activates spy-again, peeks Bob's BR
-  deck--;
-  grids = withSlot(grids, "west", 2, c("5", "clubs"));
-  pile = [...pile, c("10", "clubs")];
-  out.push({
-    caption: "Lisa's final turn. She draws a 5♣ and swaps it into her bottom-left, displacing the 10♣. The 10 activates \"spy again\" — Lisa peeks Bob's bottom-right (a 7♠).",
-    reasoning:
-      "Drops 5 points cleanly. The 10's activation gives a free piece of info Lisa will never use, but she plays out the effect anyway.",
-    board: board(grids, {
-      deckCount: deck,
-      discard: pile,
-      activeSeat: "west",
-      revealedSlots: ["north-3"],
-      highlights: ["west-2", "north-3"],
-    }),
-  });
-
-  // 21 — Reveal
+  // 16 — Reveal
   out.push({
     caption: "Everyone reveals. Lowest total wins.",
     reasoning:
-      "SAM: 4 + (−1) + 1 + 3 = 7 — winner. BOB: 5 + 7 = 12 — second. ALICE: 2 + 3 + 2 + 10 = 17 — third. LISA: 6 + 3 + 5 + 4 + 8 = 26 — fourth. Bob locked in his 12 thinking nobody could beat it, but he didn't reckon with Lisa's late King swap (which dumped her Q on Sam, but then Sam swapped it right back out) or Sam's Q-blind-swap that brought him a Red King. The lesson: Cambio calls are bets on what the rest of the table will do, not just your own hand.",
+      "SAM: 4 + 3 + 1 + 6 = 14 — winner. BOB: 5 + 6 + 5 = 16 — second. LISA: 3 + 4 + 2 + 4 + 8 = 21 — third. ALICE: 7 + 4 + 2 + 10 = 23 — fourth. Sam's call held by 2. Lessons: optimal first-turn swaps compound (Lisa's −7 setup made her J-deduction five steps later worth another −15); a clean snap of your own known card is a free −10 (Bob); and a confident Cambio call against a tightly-clustered field can still hold if you're already deepest.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,

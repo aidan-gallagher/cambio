@@ -368,7 +368,7 @@ export const STEPS: Step[] = (() => {
     }),
   });
 
-  // 13 — Sam's turn 2 — uneventful
+  // 13 — Sam's turn 2 — uneventful (kept as-is per request to leave step <14 alone)
   deck--;
   pile = [...pile, c("5", "diamonds")];
   out.push({
@@ -379,30 +379,61 @@ export const STEPS: Step[] = (() => {
       deckCount: deck,
       discard: pile,
       activeSeat: "you",
-      deckTop: c("6", "clubs"),
+      deckTop: c("K", "clubs"),
     }),
   });
 
-  // 14 — Lisa's turn 2 — uneventful
+  // 14 — Lisa draws K♣ (held)
   deck--;
-  pile = [...pile, c("6", "clubs")];
   out.push({
-    caption: "Lisa's turn 2. She draws a 6♣ and discards directly. She knows she's behind and doesn't know which of her unknowns to swap.",
+    caption: "Lisa's turn 2. She draws a Black King — K♣.",
     reasoning:
-      "Lisa's already up to five cards from her failed snap. Her grid is full of high cards by score (Q♠ 10, 3♠ 3, 10♣ 10, 4♠ 4, plus the unknown penalty 8♣). She's hoping someone calls Cambio before her score climbs further.",
+      "A Black King is 10 points if you keep it, but discarded it triggers \"peek and fling\" — peek any card on the table, then swap any card with one of her own. Lisa wants to use the effect to dump her highest known card on someone else.",
+    board: board(grids, {
+      deckCount: deck,
+      discard: pile,
+      activeSeat: "west",
+      heldCard: c("K", "clubs"),
+      deckTop: c("2", "spades"),
+    }),
+  });
+
+  // 15 — Lisa discards K♣, peeks Sam's BR (6♦)
+  pile = [...pile, c("K", "clubs")];
+  out.push({
+    caption: "Lisa discards the K♣ — peek-and-fling fires. She peeks Sam's bottom-right and finds a 6♦.",
+    reasoning:
+      "Lisa's looking for a low card in another player's grid that she can dump her Q♠ (10) onto. A 6 is decent — better than her Q. She'll swap.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
       activeSeat: "west",
       deckTop: c("2", "spades"),
+      revealedSlots: ["you-3"],
+      highlights: ["you-3"],
     }),
   });
 
-  // 15 — Bob calls Cambio
+  // 16 — Lisa swaps her Q♠ ↔ Sam's BR
+  grids = swapSlots(grids, { seat: "west", index: 0 }, { seat: "you", index: 3 });
+  out.push({
+    caption: "Lisa swaps her Q♠ into Sam's bottom-right, taking the 6♦.",
+    reasoning:
+      "Lisa drops 4 points (10 → 6); Sam's score climbs by 4. The swap is observed, so Sam now knows his bottom-right is a Q♠ — useful to him on his final turn.",
+    board: board(grids, {
+      deckCount: deck,
+      discard: pile,
+      activeSeat: "west",
+      deckTop: c("2", "spades"),
+      highlights: ["west-0", "you-3"],
+    }),
+  });
+
+  // 17 — Bob calls Cambio
   out.push({
     caption: "Bob's turn 2. Instead of drawing, he calls CAMBIO.",
     reasoning:
-      "Bob has only two cards left — a 5♥ at top-left (he placed it himself) and a 7♠ at bottom-right (peeked at opening). His known total is 12 and that's almost certainly the lowest at the table. He locks it in. Each remaining player now takes one final turn.",
+      "Bob has only two cards left — 5♥ at top-left (he placed it himself) and 7♠ at bottom-right (peeked at opening). His known total is 12 and he thinks that's the lowest at the table. He locks it in. Each remaining player now takes one final turn.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -411,55 +442,64 @@ export const STEPS: Step[] = (() => {
     }),
   });
 
-  // 16 — Alice's final turn
+  // 18 — Alice's final turn — swap 2♠ for unknown TL (was 9♦); 9 activates spy-again, peeks Bob's BR
   deck--;
-  pile = [...pile, c("2", "spades")];
+  grids = withSlot(grids, "east", 0, c("2", "spades"));
+  pile = [...pile, c("9", "diamonds")];
   out.push({
-    caption: "Alice's final turn. She draws a 2♠ and discards directly.",
+    caption: "Alice's final turn. She draws a 2♠ and swaps it into her top-left, displacing Bob's gift. The 9♦ activates \"spy again\" — Alice peeks Bob's bottom-right (a 7♠).",
     reasoning:
-      "Alice would love to swap the 2 in to drop a high card, but she only has one known unknown — Bob's gift at top-left. She has to assume it's mid-value and not risk swapping a known low card out. She stands.",
+      "Alice suspected Bob's transferred card was high — Bob would have dumped his worst. Swapping a known 2 in for the unknown drops her score by 7. The 9 fires a spy on the way out and Alice glimpses one of Bob's cards, but the round's about to end.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
       activeSeat: "east",
       deckTop: c("3", "diamonds"),
+      revealedSlots: ["north-3"],
+      highlights: ["east-0", "north-3"],
     }),
   });
 
-  // 17 — Sam's final turn
+  // 19 — Sam's final turn — swap 3♦ for Q♠ (slot 3); Q♠ activates blind swap (Sam slot 1 ↔ Alice slot 1)
   deck--;
-  pile = [...pile, c("3", "diamonds")];
+  grids = withSlot(grids, "you", 3, c("3", "diamonds"));
+  pile = [...pile, c("Q", "spades")];
+  grids = swapSlots(grids, { seat: "you", index: 1 }, { seat: "east", index: 1 });
   out.push({
-    caption: "Sam's final turn. He draws a 3♦ and discards directly.",
+    caption: "Sam's final turn. He swaps his drawn 3♦ into the Q♠ slot Lisa dumped on him. The Q♠ activates \"swap unseen\" — Sam blind-swaps his unknown top-right with Alice's known Red King.",
     reasoning:
-      "Same logic as before — Sam's known cards are already low, and his only unknown (top-right) is probably worse than the 3. But \"probably\" isn't enough to risk swapping a known card out. He stands.",
+      "Two big drops in one turn: swapping a 3 in for a known 10 is −7 deterministic. The discarded Q♠ activates a blind swap; Sam targets his last unknown (his top-right) and the publicly-known Red King at Alice's top-right. Sam loses an unknown ~6 on average and gains a known −1.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
       activeSeat: "you",
       deckTop: c("5", "clubs"),
+      highlights: ["you-3", "you-1", "east-1"],
     }),
   });
 
-  // 18 — Lisa's final turn
+  // 20 — Lisa's final turn — swap 5♣ for 10♣ (slot 2); 10 activates spy-again, peeks Bob's BR
   deck--;
-  pile = [...pile, c("5", "clubs")];
+  grids = withSlot(grids, "west", 2, c("5", "clubs"));
+  pile = [...pile, c("10", "clubs")];
   out.push({
-    caption: "Lisa's final turn. She draws a 5♣ and discards directly.",
+    caption: "Lisa's final turn. She draws a 5♣ and swaps it into her bottom-left, displacing the 10♣. The 10 activates \"spy again\" — Lisa peeks Bob's bottom-right (a 7♠).",
     reasoning:
-      "Five cards in hand, none of her unknowns are likely to be lower than a 5, and she has no information to know which to target. She stands and prays.",
+      "Drops 5 points cleanly. The 10's activation gives a free piece of info Lisa will never use, but she plays out the effect anyway.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
       activeSeat: "west",
+      revealedSlots: ["north-3"],
+      highlights: ["west-2", "north-3"],
     }),
   });
 
-  // 19 — Reveal
+  // 21 — Reveal
   out.push({
     caption: "Everyone reveals. Lowest total wins.",
     reasoning:
-      "BOB: 5 + 7 = 12 — winner. SAM: 4 + 3 + 1 + 6 = 14, narrow second. ALICE: 9 + (−1) + 2 + 10 = 20 — Bob's transferred 9♦ stings. LISA: 10 + 3 + 10 + 4 + 8 = 35 — the failed-snap penalty (8♣) is what tipped her into last place. Bob's two snaps were the round: his 4♣ shrank his grid early, and his 7♣-on-7♦ snap let him dump his worst card while shrinking again.",
+      "SAM: 4 + (−1) + 1 + 3 = 7 — winner. BOB: 5 + 7 = 12 — second. ALICE: 2 + 3 + 2 + 10 = 17 — third. LISA: 6 + 3 + 5 + 4 + 8 = 26 — fourth. Bob locked in his 12 thinking nobody could beat it, but he didn't reckon with Lisa's late King swap (which dumped her Q on Sam, but then Sam swapped it right back out) or Sam's Q-blind-swap that brought him a Red King. The lesson: Cambio calls are bets on what the rest of the table will do, not just your own hand.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,

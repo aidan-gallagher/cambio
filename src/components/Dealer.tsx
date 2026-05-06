@@ -108,11 +108,11 @@ export default function Dealer() {
 
   return (
     <div
-      className="scene-fitter"
-      style={{ "--scene-w": 380, "--scene-h": 420 } as Record<string, string | number>}
-    >
-    <div
-      className="scene"
+      style={{
+        position: "relative",
+        width: 380,
+        height: 420,
+      }}
       aria-label="A Cambio table mid-deal: four players around a deck. Lisa, Bob, Alice, and You."
     >
       {/* Felt halo */}
@@ -264,7 +264,6 @@ export default function Dealer() {
           );
         })}
       </div>
-    </div>
     </div>
   );
 }

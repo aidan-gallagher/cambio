@@ -518,7 +518,7 @@ export default function WalkThrough() {
         style={{
           position: "relative",
           width: "100%",
-          height: 640,
+          height: 760,
           margin: "0 auto",
         }}
         aria-label="A Cambio walkthrough table view."

@@ -1,0 +1,27 @@
+---
+import Base from "~/layouts/Base.astro";
+import WalkThrough from "~/components/WalkThrough.tsx";
+---
+
+<Base
+  title="Cambio — Example walkthrough"
+  description="A step-by-step animated walkthrough of a single Cambio game. Use the arrow keys to advance."
+>
+  <div class="max-w-6xl mx-auto px-6 pt-16 pb-10">
+    <div class="eyebrow filigree">A guided round</div>
+    <h1 class="font-display text-5xl sm:text-6xl text-[var(--color-gold-50)] mt-3 leading-tight">
+      Example
+    </h1>
+    <p class="mt-4 text-[var(--color-ivory)]/85 max-w-2xl text-lg leading-relaxed">
+      A scripted walkthrough of a complete Cambio game between Sam, Lisa, Bob,
+      and Alice. Cards stay face-down except when the active player is
+      actually looking at one — so you see the table from each player's
+      shifting perspective. Use the arrow keys (or the buttons below) to step
+      through.
+    </p>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-6 pb-24">
+    <WalkThrough client:load />
+  </div>
+</Base>

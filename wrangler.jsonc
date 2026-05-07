@@ -5,6 +5,10 @@
   "assets": {
     "directory": "./dist"
   },
+  "routes": [
+    { "pattern": "cambio-game.com", "custom_domain": true },
+    { "pattern": "www.cambio-game.com", "custom_domain": true }
+  ],
   "observability": {
     "enabled": true
   }

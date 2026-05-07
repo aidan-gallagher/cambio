@@ -9,5 +9,5 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  site: "https://cambio.example.com",
+  site: "https://cambio-game.com",
 });

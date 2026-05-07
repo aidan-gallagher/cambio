@@ -61,7 +61,10 @@ body::before {
   z-index: 0;
 }
 
-main, header, footer { position: relative; z-index: 1; }
+@layer base {
+  main, footer { position: relative; z-index: 1; }
+  header { position: relative; z-index: 30; }
+}
 
 .font-display { font-family: var(--font-display); letter-spacing: 0.01em; }
 

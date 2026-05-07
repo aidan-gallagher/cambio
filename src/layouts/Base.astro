@@ -46,34 +46,117 @@ const canonical = Astro.site
   </head>
   <body>
     <header class="sticky top-0 z-30 backdrop-blur-md bg-[color-mix(in_oklab,var(--color-felt-950)_75%,transparent)] border-b border-[color-mix(in_oklab,var(--color-gold-400)_22%,transparent)] no-print">
-      <nav class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2">
-        <a href="/" class="font-display text-base sm:text-xl tracking-[0.18em] text-[var(--color-gold-200)] hover:text-[var(--color-gold-50)] transition-colors shrink-0">
+      <nav class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2 relative">
+        <a href="/" class="font-display text-lg sm:text-xl tracking-[0.18em] text-[var(--color-gold-200)] hover:text-[var(--color-gold-50)] transition-colors shrink-0">
           CAMBIO
         </a>
-        <ul class="flex gap-0.5 sm:gap-3 text-xs sm:text-sm">
+
+        {/* Desktop nav */}
+        <ul class="hidden sm:flex gap-3 text-sm">
           {nav.map((n) => {
             const active = path === n.href || (n.href !== "/" && path.startsWith(n.href));
             return (
               <li>
                 <a
                   href={n.href}
-                  class={`px-1.5 sm:px-3 py-1.5 rounded-md transition-colors whitespace-nowrap ${active ? "text-[var(--color-gold-50)] bg-[color-mix(in_oklab,var(--color-gold-400)_14%,transparent)]" : "text-[var(--color-ivory-dim)] hover:text-[var(--color-ivory)]"}`}
+                  class={`px-3 py-1.5 rounded-md transition-colors whitespace-nowrap ${active ? "text-[var(--color-gold-50)] bg-[color-mix(in_oklab,var(--color-gold-400)_14%,transparent)]" : "text-[var(--color-ivory-dim)] hover:text-[var(--color-ivory)]"}`}
                 >
-                  {n.label === "Cheat Sheet" ? (
-                    <>
-                      <span class="sm:hidden">Cheat</span>
-                      <span class="hidden sm:inline">Cheat Sheet</span>
-                    </>
-                  ) : (
-                    n.label
-                  )}
+                  {n.label}
                 </a>
               </li>
             );
           })}
         </ul>
+
+        {/* Mobile hamburger */}
+        <button
+          id="mobile-nav-toggle"
+          type="button"
+          class="sm:hidden inline-flex items-center justify-center w-11 h-11 -mr-2 rounded-md text-[var(--color-gold-200)] hover:text-[var(--color-gold-50)] hover:bg-[color-mix(in_oklab,var(--color-gold-400)_10%,transparent)] transition-colors"
+          aria-controls="mobile-nav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <svg class="icon-open w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="4" y1="7" x2="20" y2="7" />
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <line x1="4" y1="17" x2="20" y2="17" />
+          </svg>
+          <svg class="icon-close hidden w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="6" y1="6" x2="18" y2="18" />
+            <line x1="6" y1="18" x2="18" y2="6" />
+          </svg>
+        </button>
+
+        {/* Mobile drawer */}
+        <div
+          id="mobile-nav"
+          class="sm:hidden hidden absolute left-0 right-0 top-full z-40 bg-[var(--color-felt-900)] border-b border-[color-mix(in_oklab,var(--color-gold-400)_22%,transparent)] shadow-xl shadow-black/60"
+        >
+          <ul class="flex flex-col py-2 px-2">
+            {nav.map((n) => {
+              const active = path === n.href || (n.href !== "/" && path.startsWith(n.href));
+              return (
+                <li>
+                  <a
+                    href={n.href}
+                    data-mobile-nav-link
+                    class={`block px-4 py-3 rounded-md text-base transition-colors ${active ? "text-[var(--color-gold-50)] bg-[color-mix(in_oklab,var(--color-gold-400)_14%,transparent)]" : "text-[var(--color-ivory-dim)] hover:text-[var(--color-ivory)] hover:bg-[color-mix(in_oklab,var(--color-gold-400)_8%,transparent)]"}`}
+                  >
+                    {n.label}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </nav>
     </header>
+
+    <script is:inline>
+      (function () {
+        const btn = document.getElementById("mobile-nav-toggle");
+        const panel = document.getElementById("mobile-nav");
+        if (!btn || !panel) return;
+
+        const iconOpen = btn.querySelector(".icon-open");
+        const iconClose = btn.querySelector(".icon-close");
+
+        function setOpen(open) {
+          btn.setAttribute("aria-expanded", String(open));
+          panel.classList.toggle("hidden", !open);
+          if (iconOpen) iconOpen.classList.toggle("hidden", open);
+          if (iconClose) iconClose.classList.toggle("hidden", !open);
+        }
+
+        btn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          const isOpen = btn.getAttribute("aria-expanded") === "true";
+          setOpen(!isOpen);
+        });
+
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && btn.getAttribute("aria-expanded") === "true") {
+            setOpen(false);
+            btn.focus();
+          }
+        });
+
+        document.addEventListener("click", function (e) {
+          if (btn.getAttribute("aria-expanded") !== "true") return;
+          const target = e.target;
+          if (target instanceof Node && !panel.contains(target) && !btn.contains(target)) {
+            setOpen(false);
+          }
+        });
+
+        panel.querySelectorAll("[data-mobile-nav-link]").forEach(function (link) {
+          link.addEventListener("click", function () {
+            setOpen(false);
+          });
+        });
+      })();
+    </script>
 
     <main class="min-h-[70vh]">
       <slot />

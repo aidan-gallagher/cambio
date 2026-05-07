@@ -87,7 +87,8 @@ const values: Array<{
           they stay where they are.
         </p>
 
-        <div class="not-prose setup-table">
+        <div class="scene-fitter setup-fitter" style="--scene-w: 720; --scene-h: 500;">
+        <div class="scene not-prose setup-table">
           <div class="seat top">
             <span class="seat-label">PLAYER 1</span>
             <div class="rot-wrap" style="width: 140px; height: 196px;">
@@ -130,9 +131,13 @@ const values: Array<{
             <span class="seat-label seat-label-vertical">PLAYER 3</span>
           </div>
         </div>
+        </div>
       </Section>
 
       <style>
+        .setup-fitter {
+          margin: 3rem auto 1.5rem;
+        }
         .setup-table {
           display: grid;
           grid-template-columns: auto 1fr auto;
@@ -143,8 +148,6 @@ const values: Array<{
           row-gap: 1.75rem;
           align-items: center;
           justify-items: center;
-          max-width: 720px;
-          margin: 3rem auto 1.5rem;
           position: relative;
           padding: 1rem;
         }
@@ -182,25 +185,6 @@ const values: Array<{
         .deck { position: relative; width: 68px; height: 96px; margin: 0 auto; }
         .deck-card { position: absolute; }
 
-        @media (max-width: 700px) {
-          .setup-table {
-            grid-template-columns: 1fr;
-            grid-template-areas:
-              "top"
-              "center"
-              "left"
-              "right";
-            row-gap: 2.25rem;
-          }
-          .setup-table .left,
-          .setup-table .right {
-            flex-direction: column;
-            gap: 1rem;
-          }
-          .seat-label-vertical {
-            writing-mode: horizontal-tb;
-          }
-        }
       </style>
 
       <Section id="opening" eyebrow="The single permitted glance" title="Opening peek">

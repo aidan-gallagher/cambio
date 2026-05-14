@@ -155,9 +155,9 @@ export const STEPS: Step[] = (() => {
 
   // 0 — Deal
   out.push({
-    caption: "The deck is shuffled and four cards are dealt face-down to each player in a 2×2 grid.",
+    caption: "Deal. Four face-down cards to each player in a 2×2 grid.",
     reasoning:
-      "All cards are face-down. From here on you'll only see a card when the player whose turn it is is actually looking at it.",
+      "You only see a card when the active player is looking at it.",
     board: board(grids, { deckCount: deck, discard: pile, activeSeat: null, deckTop: c("8", "diamonds") }),
   });
 
@@ -165,7 +165,7 @@ export const STEPS: Step[] = (() => {
   out.push({
     caption: "Opening peek. Every player privately looks at their own bottom two cards.",
     reasoning:
-      "Each player gets exactly one free peek before play begins — their two bottom cards. Sam now privately knows A♥ and 6♦; Lisa knows 10♣ and 4♠; Bob knows 5♠ and 10♥ (and that 10♥ is about to matter); Alice knows 2♦ and J♥. After this, no more free looks.",
+      "Sam sees A♥, 6♦. Lisa sees 10♣, 4♠. Bob sees 5♠, 10♥. Alice sees 2♦, J♥. No more free peeks after this.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -191,7 +191,7 @@ export const STEPS: Step[] = (() => {
   out.push({
     caption: "Sam's turn. He draws an 8♦.",
     reasoning:
-      "Sam already knows two of his cards sum to only 7 (A♥ + 6♦), with his top-left (TL) and top-right (TR) still unknown. The 8 he just drew is heavier than an average unknown — and 8 is a power card. Discarding it directly trades zero score for a free private peek.",
+      "8 is a power card. Discard direct for a free self-peek.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -204,9 +204,9 @@ export const STEPS: Step[] = (() => {
   // 3 — Sam discards 8♦, peeks own TL = 4♥
   pile = [...pile, c("8", "diamonds")];
   out.push({
-    caption: "Sam discards the 8♦ — \"see your fate\" fires. He peeks his top-left: 4♥.",
+    caption: "Sam discards the 8♦ — \"see your fate\" fires. He peeks his TL: 4♥.",
     reasoning:
-      "Sam now privately knows three of his four cards (TL 4♥, BL A♥, BR 6♦) — total 11 plus an unknown TR. He's already deep in low-hand territory.",
+      "Sam now knows three of four: 4 + 1 + 6 = 11. TR unknown.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -220,9 +220,9 @@ export const STEPS: Step[] = (() => {
   // 4 — Lisa draws 3♠
   deck--;
   out.push({
-    caption: "Lisa's turn. She draws a 3♠ — and she knows there's a 10♣ sitting in her grid.",
+    caption: "Lisa's turn. She draws a 3♠.",
     reasoning:
-      "From the opening peek Lisa knows her bottom-left is a 10♣. A 3 swapped into that exact slot is a guaranteed 7-point drop, and the displaced 10 is a power card — \"spy again\" — so she gets to peek an opponent on the way out. This is the textbook play.",
+      "She knows BL = 10♣. Swap the 3 in: −7, and the 10 fires \"spy again.\"",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -236,9 +236,9 @@ export const STEPS: Step[] = (() => {
   grids = withSlot(grids, "west", 2, c("3", "spades"));
   pile = [...pile, c("10", "clubs")];
   out.push({
-    caption: "Lisa swaps the 3♠ into her bottom-left. The 10♣ hits the discard, fires \"spy again,\" and Lisa peeks Alice's bottom-right → J♥.",
+    caption: "Lisa swaps the 3♠ into BL. The 10♣ fires \"spy again\" — she peeks Alice's BR → J♥.",
     reasoning:
-      "Deterministic −7 on the swap, plus a free reconnaissance peek. She picks Alice's BR on a hunch. A J found there is exactly the kind of intelligence she'll be able to reuse later — remember this peek; it returns in step 13.",
+      "Remember the J♥ — it matters in step 13.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -253,9 +253,9 @@ export const STEPS: Step[] = (() => {
   grids = removeSlot(grids, "north", 3);
   pile = [...pile, c("10", "hearts")];
   out.push({
-    caption: "SNAP. Bob remembers his bottom-right is a 10♥ from the opening peek and slaps it onto the 10♣. Successful snap — his grid shrinks 4 → 3.",
+    caption: "SNAP. Bob slaps his BR 10♥ onto the 10♣. Grid shrinks 4 → 3.",
     reasoning:
-      "Snapping your own card is pure value: the card just leaves your grid, no replacement, no power activation. Bob's score drops by 10 in a single instant. He now holds three cards: TL (10♠, unknown to him), TR (6♣, unknown), BL (5♠, peeked).",
+      "Snapping your own card removes it with no replacement. Bob drops 10 free.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -270,7 +270,7 @@ export const STEPS: Step[] = (() => {
   out.push({
     caption: "Bob's turn. He draws a 5♥.",
     reasoning:
-      "Bob's only known card is BL = 5♠. Swapping the 5♥ into BL is a no-op. Discarding directly does nothing (5 isn't a power card). His best line is to swap into one of the unknowns: about a 50% chance of triggering a power on the way out, and the displaced card is on average roughly a 6 — a small expected gain. He picks TL.",
+      "5 isn't a power card. He swaps into an unknown TL — positive EV either way.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -284,9 +284,9 @@ export const STEPS: Step[] = (() => {
   grids = withSlot(grids, "north", 0, c("5", "hearts"));
   pile = [...pile, c("10", "spades")];
   out.push({
-    caption: "Bob swaps the 5♥ into his top-left. The displaced 10♠ activates — \"spy again\" — and Bob peeks Alice's top-left → 7♣.",
+    caption: "Bob swaps 5♥ into TL. Displaced 10♠ fires \"spy again\" — he peeks Alice's TL → 7♣.",
     reasoning:
-      "The gamble pays off: the unknown was a 10♠ (−5 score) AND a power card (free spy). Bob now knows two of his three cards (TL 5♥, BL 5♠) summing to 10, with TR still unknown — plus a private read on Alice's TL.",
+      "Lucky: the unknown was a 10. −5 swap plus a free spy.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -300,9 +300,9 @@ export const STEPS: Step[] = (() => {
   // 9 — Lisa FAILED SNAP — slaps her BL forgetting she just dumped the 10
   grids = appendCard(grids, "west", c("8", "clubs"));
   out.push({
-    caption: "Lisa lunges to snap. Muscle memory from the opening peek says \"10 in BL,\" she forgets she just swapped it out, and slaps her BL face-up — exposing her own 3♠. Failed snap.",
+    caption: "Lisa snaps on the 10♠, forgetting she swapped the 10 out of BL. Failed — 3♠ stays exposed.",
     reasoning:
-      "A real-world misplay: the opening-peek memory of \"10 in my bottom-left\" overrode her own most-recent move. The 3♠ stays publicly visible and Lisa draws a face-down penalty card (8♣) into a fifth slot. Her grid: TL Q♠, TR 4♦, BL 3♠ (visible), BR 4♠, slot 4 8♣.",
+      "Penalty: she draws a face-down 8♣ as a fifth card.",
     board: board(grids, {
       deckCount: deck - 1,
       discard: pile,
@@ -317,9 +317,9 @@ export const STEPS: Step[] = (() => {
   // 10 — Alice draws K♣
   deck--;
   out.push({
-    caption: "Alice's turn. She draws a K♣ — a Black King, worth 10 if kept but a peek-and-fling if discarded.",
+    caption: "Alice's turn. She draws a K♣.",
     reasoning:
-      "A Black King discarded is the most leveraged single card in the game. Alice already holds J♥ at her BR (10 points) — and Lisa's exposed 3♠ at BL is the lowest publicly-known card on the table. Trading her J for that 3 is a clean −7. The K is worth burning for the effect.",
+      "She holds J♥ (10). Lisa's exposed 3♠ is the lowest known card. Burn the K to swap J for 3.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -335,9 +335,9 @@ export const STEPS: Step[] = (() => {
   pile = [...pile, c("K", "clubs")];
   grids = swapSlots(grids, { seat: "east", index: 3 }, { seat: "west", index: 2 });
   out.push({
-    caption: "Alice discards the K♣ — peek-and-fling. She peeks her own TR (7♦) and then swaps her BR (J♥) with Lisa's exposed BL (3♠). Alice −7, Lisa +7.",
+    caption: "Alice discards K♣. Peeks her TR (7♦), swaps her BR (J♥) ↔ Lisa's BL (3♠). Alice −7, Lisa +7.",
     reasoning:
-      "Peek-and-fling resolves as two independent effects. Alice picks the peek on her TR (one of her two remaining unknowns — she still doesn't know TL). The swap targets the lowest publicly-known card on the table. The 3♠ moves face-up into Alice's BR; the J♥ slides face-down into Lisa's BL. Lisa, having seen Alice's BR was a J back in step 5, can now deduce her new BL is that J — if she's paying attention.",
+      "Lisa can deduce her new BL is the J♥ she spied in step 5.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -350,9 +350,9 @@ export const STEPS: Step[] = (() => {
 
   // 12 — Sam calls Cambio
   out.push({
-    caption: "Sam's turn 2. Instead of drawing, he calls CAMBIO.",
+    caption: "Sam's turn 2. He calls CAMBIO.",
     reasoning:
-      "Sam has 3 of 4 cards known: 4 + 1 + 6 = 11 plus an unknown TR — call it ~17 on the average, 21 in the worst case. Table read: Lisa is sitting on five cards including a face-down penalty and an unknown she just absorbed from Alice (Alice burned a King to dump it, so it's almost certainly heavy). Bob snapped a 10, then swapped a drawn card into TL displacing another 10 — he's down to three cards but two of them are still unknowns. Alice unloaded her J onto Lisa but still carries unknowns of her own. Sam's known-low is the safest hand on the table; he locks it in before anyone else can grind theirs down further.",
+      "Sam: 11 known + 1 unknown ≈ 17. Lisa has 5 cards. Bob has unknowns. Alice just absorbed an unknown. Sam locks in the safest hand.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -370,9 +370,9 @@ export const STEPS: Step[] = (() => {
   pile = [...pile, c("J", "hearts")];
   grids = swapSlots(grids, { seat: "west", index: 0 }, { seat: "east", index: 3 });
   out.push({
-    caption: "Lisa's final turn. She draws a 2♣ and — connecting her step-5 spy to Alice's K-swap — deduces her BL is that J♥. She swaps the 2 in (−8). The displaced J fires swap-unseen, and she blind-swaps her unknown TL with Alice's exposed BR (3♠).",
+    caption: "Lisa's final turn. She draws 2♣, deduces BL = J♥, swaps it in (−8). J fires swap-unseen — she blind-swaps TL ↔ Alice's exposed 3♠.",
     reasoning:
-      "Two big drops in one turn, both enabled by attention paid earlier. The BL swap is a deterministic −8 (J → 2). The J's swap-unseen lets her dump an unknown for a known low: her TL was Q♠ (10), Alice's BR was 3♠ — Lisa drops another 7. Total turn: −15 on Lisa, +7 on Alice.",
+      "Unknown TL was Q♠ — another −7. Turn total: Lisa −15, Alice +7.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -387,9 +387,9 @@ export const STEPS: Step[] = (() => {
   deck--;
   pile = [...pile, c("7", "spades")];
   out.push({
-    caption: "Bob's final turn. He draws a 7♠. Every swap raises his score, so he discards directly — \"see your fate\" — and peeks his last unknown (TR → 6♣).",
+    caption: "Bob's final turn. He draws 7♠, discards direct — \"see your fate\" — peeks TR → 6♣.",
     reasoning:
-      "Bob's grid is TL 5♥, TR ?, BL 5♠. Swapping a 7 displaces a 5 or an unknown averaging 6 — every option pushes his score up. The 7's see-your-fate gives him the satisfaction of full hand knowledge (final: 16) but no further drop.",
+      "Every swap raises his score. Final: 16.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -407,9 +407,9 @@ export const STEPS: Step[] = (() => {
   grids = withSlot(grids, "east", 1, c("4", "clubs"));
   pile = [...pile, c("7", "diamonds")];
   out.push({
-    caption: "Alice's final turn. She draws a 4♣ and swaps it into her TR (known 7♦). The displaced 7 fires see-your-fate; she peeks her TL → 7♣.",
+    caption: "Alice's final turn. She draws 4♣, swaps into TR (7♦). The 7 fires see-your-fate — she peeks TL → 7♣.",
     reasoning:
-      "TR was Alice's only known high card, so swapping the 4 in is a deterministic −3. She still has one unknown (her BR — whatever Lisa just dumped on her via swap-unseen), but no fourth action can do anything about it. The 7's see-your-fate is purely informational; she peeks TL for closure. Final: 7 + 4 + 2 + Q♠ = 23.",
+      "−3. Final: 7 + 4 + 2 + 10 = 23.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -424,7 +424,7 @@ export const STEPS: Step[] = (() => {
   out.push({
     caption: "Everyone reveals. Lowest total wins.",
     reasoning:
-      "SAM: 4 + 3 + 1 + 6 = 14 — winner. BOB: 5 + 6 + 5 = 16 — second. LISA: 3 + 4 + 2 + 4 + 8 = 21 — third. ALICE: 7 + 4 + 2 + 10 = 23 — fourth. Sam's call held by 2. Lessons: optimal first-turn swaps compound (Lisa's −7 setup made her J-deduction five steps later worth another −15); a clean snap of your own known card is a free −10 (Bob); and a confident Cambio call against a tightly-clustered field can still hold if you're already deepest.",
+      "Sam 14 · Bob 16 · Lisa 21 · Alice 23. Sam wins by 2.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,

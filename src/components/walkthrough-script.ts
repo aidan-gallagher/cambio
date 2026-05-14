@@ -298,9 +298,9 @@ export const STEPS: Step[] = (() => {
   // 9 — Lisa FAILED SNAP — slaps her BL forgetting she just dumped the 10
   grids = appendCard(grids, "west", c("8", "clubs"));
   out.push({
-    caption: "Lisa snaps on the 10♠, forgetting she swapped the 10 out of BL. Failed — 3♠ stays exposed.",
+    caption: "Lisa snaps on the 10♠, forgetting she swapped the 10 out of BL. Failed snap.",
     reasoning:
-      "Penalty: she draws a face-down 8♣ as a fifth card.",
+      "Penalty: she draws a face-down card as a fifth card.",
     board: board(grids, {
       deckCount: deck - 1,
       discard: pile,
@@ -317,15 +317,13 @@ export const STEPS: Step[] = (() => {
   out.push({
     caption: "Alice's turn. She draws a K♣.",
     reasoning:
-      "She holds J♥ (10). Lisa's exposed 3♠ is the lowest known card. Burn the K to swap J for 3.",
+      "She holds J♥ (10). Everyone just saw Lisa's BL is a 3♠. Burn the K to swap J for 3.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
       activeSeat: "east",
       heldCard: c("K", "clubs"),
       deckTop: c("2", "clubs"),
-      // Lisa's BL is still publicly exposed from the failed snap.
-      revealedSlots: ["west-2"],
     }),
   });
 
@@ -341,7 +339,7 @@ export const STEPS: Step[] = (() => {
       discard: pile,
       activeSeat: "east",
       deckTop: c("2", "clubs"),
-      revealedSlots: ["east-1", "east-3"],
+      revealedSlots: ["east-1"],
       highlights: ["east-1", "east-3", "west-2"],
     }),
   });
@@ -356,8 +354,6 @@ export const STEPS: Step[] = (() => {
       discard: pile,
       activeSeat: "you",
       deckTop: c("2", "clubs"),
-      // Alice's BR now holds the exposed 3♠ that came from Lisa's BL.
-      revealedSlots: ["east-3"],
     }),
   });
 
@@ -368,7 +364,7 @@ export const STEPS: Step[] = (() => {
   pile = [...pile, c("J", "hearts")];
   grids = swapSlots(grids, { seat: "west", index: 0 }, { seat: "east", index: 3 });
   out.push({
-    caption: "Lisa's final turn. She draws 2♣, deduces BL = J♥, swaps it in (−8). J fires swap-unseen — she blind-swaps TL ↔ Alice's exposed 3♠.",
+    caption: "Lisa's final turn. She draws 2♣, deduces BL = J♥, swaps it in (−8). J fires swap-unseen — she blind-swaps TL ↔ Alice's BR (known 3♠).",
     reasoning:
       "Unknown TL was Q♠ — another −7. Turn total: Lisa −15, Alice +7.",
     board: board(grids, {
@@ -376,7 +372,6 @@ export const STEPS: Step[] = (() => {
       discard: pile,
       activeSeat: "west",
       deckTop: c("7", "spades"),
-      revealedSlots: ["west-0"],
       highlights: ["west-2", "west-0", "east-3"],
     }),
   });
@@ -393,8 +388,7 @@ export const STEPS: Step[] = (() => {
       discard: pile,
       activeSeat: "north",
       deckTop: c("4", "clubs"),
-      // Lisa's TL now publicly holds the 3♠ from her swap-unseen.
-      revealedSlots: ["north-1", "west-0"],
+      revealedSlots: ["north-1"],
       highlights: ["north-1"],
     }),
   });
@@ -412,8 +406,7 @@ export const STEPS: Step[] = (() => {
       deckCount: deck,
       discard: pile,
       activeSeat: "east",
-      // Lisa's TL still publicly shows the 3♠.
-      revealedSlots: ["east-0", "west-0"],
+      revealedSlots: ["east-0"],
       highlights: ["east-0", "east-1"],
     }),
   });

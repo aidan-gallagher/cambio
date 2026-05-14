@@ -3,15 +3,104 @@ import { useEffect, useMemo, useState } from "react";
 import { CardBack, CardFace, FlipCard } from "./cards";
 import { STEPS, totalOf, type BoardState, type CardId, type SeatId } from "./walkthrough-script";
 
-const SEAT_LAYOUT: Record<
-  SeatId,
-  { center: { x: number; y: number }; cardW: number; rotate: number; name: string; labelOffset: { x: number; y: number } }
-> = {
-  you:   { center: { x: 0,    y: 200  }, cardW: 60, rotate: 0,   name: "SAM",   labelOffset: { x: 0,    y: 135  } },
-  north: { center: { x: 0,    y: -200 }, cardW: 48, rotate: 180, name: "BOB",   labelOffset: { x: 0,    y: -125 } },
-  west:  { center: { x: -200, y: 0    }, cardW: 48, rotate: 90,  name: "LISA",  labelOffset: { x: -135, y: 0    } },
-  east:  { center: { x: 200,  y: 0    }, cardW: 48, rotate: -90, name: "ALICE", labelOffset: { x: 135,  y: 0    } },
+type SeatConfig = {
+  center: { x: number; y: number };
+  cardW: number;
+  rotate: number;
+  name: string;
+  labelOffset: { x: number; y: number };
+  verticalLabel?: boolean;
 };
+type SeatLayoutMap = Record<SeatId, SeatConfig>;
+
+interface LayoutPreset {
+  layout: SeatLayoutMap;
+  scene: { w: number; h: number };
+  pileW: number;
+  deckLeft: number;
+  discardLeft: number;
+  pileTop: number;
+  subLabelTop: number;
+  subLabelFontSize: number;
+  heldW: number;
+  heldFactor: number;
+  showHeld: boolean;
+  labelFontSize: number;
+  labelSpacing: string;
+  subLabelPad: number;
+  captionFontSize: string;
+  reasoningFontSize: string;
+  showActiveText: boolean;
+  scoreFontSize: number;
+  showPileLabels: boolean;
+}
+
+const DESKTOP_PRESET: LayoutPreset = {
+  layout: {
+    you:   { center: { x: 0,    y: 200  }, cardW: 60, rotate: 0,   name: "SAM",   labelOffset: { x: 0,    y: 135  } },
+    north: { center: { x: 0,    y: -200 }, cardW: 48, rotate: 180, name: "BOB",   labelOffset: { x: 0,    y: -125 } },
+    west:  { center: { x: -200, y: 0    }, cardW: 48, rotate: 90,  name: "LISA",  labelOffset: { x: -135, y: 0    } },
+    east:  { center: { x: 200,  y: 0    }, cardW: 48, rotate: -90, name: "ALICE", labelOffset: { x: 135,  y: 0    } },
+  },
+  scene: { w: 720, h: 760 },
+  pileW: 56,
+  deckLeft: -36,
+  discardLeft: 36,
+  pileTop: -36,
+  subLabelTop: 60,
+  subLabelFontSize: 9,
+  heldW: 60,
+  heldFactor: 0.55,
+  showHeld: true,
+  labelFontSize: 11,
+  labelSpacing: "0.32em",
+  subLabelPad: 28,
+  captionFontSize: "1.25rem",
+  reasoningFontSize: "0.98rem",
+  showActiveText: true,
+  scoreFontSize: 22,
+  showPileLabels: true,
+};
+
+const MOBILE_PRESET: LayoutPreset = {
+  layout: {
+    you:   { center: { x: 0,    y: 200  }, cardW: 56, rotate: 0,   name: "SAM",   labelOffset: { x: 0, y: 106 } },
+    north: { center: { x: 0,    y: -215 }, cardW: 44, rotate: 180, name: "BOB",   labelOffset: { x: 0, y: -86 } },
+    west:  { center: { x: -112, y: -70  }, cardW: 44, rotate: 90,  name: "LISA",  labelOffset: { x: 0, y: -78 } },
+    east:  { center: { x: 112,  y: -70  }, cardW: 44, rotate: -90, name: "ALICE", labelOffset: { x: 0, y: -78 } },
+  },
+  scene: { w: 380, h: 650 },
+  pileW: 34,
+  deckLeft: -36,
+  discardLeft: 4,
+  pileTop: 24,
+  subLabelTop: 76,
+  subLabelFontSize: 7,
+  heldW: 0,
+  heldFactor: 0,
+  showHeld: false,
+  labelFontSize: 9,
+  labelSpacing: "0.22em",
+  subLabelPad: 15,
+  captionFontSize: "1.05rem",
+  reasoningFontSize: "0.92rem",
+  showActiveText: false,
+  scoreFontSize: 16,
+  showPileLabels: false,
+};
+
+function useIsMobile(breakpoint = 640) {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);
+    const check = () => setIsMobile(mq.matches);
+    check();
+    mq.addEventListener("change", check);
+    return () => mq.removeEventListener("change", check);
+  }, [breakpoint]);
+  return isMobile;
+}
 
 function gridOffsets(cardW: number, count: number) {
   const cardH = Math.round(cardW * 1.45);
@@ -76,6 +165,7 @@ function CardSlot({
 
 function SeatGrid({
   seat,
+  cfg,
   state,
   revealedSlots,
   userRevealedSlots,
@@ -84,6 +174,7 @@ function SeatGrid({
   onCardClick,
 }: {
   seat: SeatId;
+  cfg: SeatConfig;
   state: BoardState["seats"][SeatId];
   revealedSlots: Set<string>;
   userRevealedSlots: Set<string>;
@@ -91,7 +182,6 @@ function SeatGrid({
   allRevealed: boolean;
   onCardClick: (slotKey: string) => void;
 }) {
-  const cfg = SEAT_LAYOUT[seat];
   const offsets = gridOffsets(cfg.cardW, state.grid.length);
   return (
     <div style={{ position: "absolute", left: cfg.center.x, top: cfg.center.y }}>
@@ -135,14 +225,41 @@ function SeatGrid({
 
 function SeatLabel({
   seat,
+  cfg,
   active,
   score,
+  preset,
 }: {
   seat: SeatId;
+  cfg: SeatConfig;
   active: boolean;
   score: number | null;
+  preset: LayoutPreset;
 }) {
-  const cfg = SEAT_LAYOUT[seat];
+  const fontSize = preset.labelFontSize + (seat === "you" ? 1 : 0);
+  const scoreFontSize = preset.scoreFontSize;
+  // If the label sits "above" the seat (negative y offset), the cards are
+  // below it, so the score should appear above the label to avoid overlapping
+  // the cards on the reveal step.
+  const scoreAbove = cfg.labelOffset.y < 0;
+  const scoreNode =
+    score !== null ? (
+      <motion.div
+        initial={{ opacity: 0, y: scoreAbove ? 4 : -4 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2, duration: 0.4 }}
+        style={{
+          marginTop: scoreAbove ? 0 : 6,
+          marginBottom: scoreAbove ? 6 : 0,
+          fontFamily: "Cinzel, serif",
+          color: "#fbf3dc",
+          fontSize: scoreFontSize,
+          letterSpacing: "0.05em",
+        }}
+      >
+        {score}
+      </motion.div>
+    ) : null;
   return (
     <div
       style={{
@@ -154,6 +271,7 @@ function SeatLabel({
         pointerEvents: "none",
       }}
     >
+      {scoreAbove && scoreNode}
       <motion.div
         animate={{
           borderColor: active
@@ -166,7 +284,7 @@ function SeatLabel({
         transition={{ duration: 0.3 }}
         style={{
           display: "inline-block",
-          padding: active ? "5px 12px" : "5px 0",
+          padding: active ? "5px 10px" : "5px 0",
           borderRadius: 4,
           border: "1px solid rgba(0,0,0,0)",
         }}
@@ -179,15 +297,15 @@ function SeatLabel({
           transition={{ duration: 0.3 }}
           style={{
             fontFamily: "Cinzel, serif",
-            letterSpacing: "0.32em",
-            fontSize: seat === "you" ? 12 : 11,
+            letterSpacing: preset.labelSpacing,
+            fontSize,
             whiteSpace: "nowrap",
           }}
         >
-          {SEAT_LAYOUT[seat].name}
+          {cfg.name}
         </motion.div>
       </motion.div>
-      {active && (
+      {active && preset.showActiveText && (
         <motion.div
           initial={{ opacity: 0, y: -2 }}
           animate={{ opacity: 1, y: 0 }}
@@ -196,7 +314,7 @@ function SeatLabel({
             marginTop: 4,
             color: "#d4a64a",
             fontFamily: "Inter, sans-serif",
-            fontSize: 10,
+            fontSize: Math.max(9, fontSize - 1),
             letterSpacing: "0.18em",
             textTransform: "uppercase",
             fontStyle: "italic",
@@ -205,22 +323,7 @@ function SeatLabel({
           active
         </motion.div>
       )}
-      {score !== null && (
-        <motion.div
-          initial={{ opacity: 0, y: -4 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.4 }}
-          style={{
-            marginTop: 6,
-            fontFamily: "Cinzel, serif",
-            color: "#fbf3dc",
-            fontSize: 22,
-            letterSpacing: "0.05em",
-          }}
-        >
-          {score}
-        </motion.div>
-      )}
+      {!scoreAbove && scoreNode}
     </div>
   );
 }
@@ -229,10 +332,12 @@ function DeckAndDiscard({
   board,
   deckRevealed,
   onDeckClick,
+  preset,
 }: {
   board: BoardState;
   deckRevealed: boolean;
   onDeckClick: () => void;
+  preset: LayoutPreset;
 }) {
   const top = board.discard[board.discard.length - 1];
   const deckTop = board.deckTop;
@@ -240,6 +345,7 @@ function DeckAndDiscard({
     4,
     Math.max(1, Math.floor(board.deckCount / 8)),
   );
+  const { pileW, deckLeft, discardLeft, pileTop, subLabelTop, subLabelFontSize, subLabelPad } = preset;
   return (
     <div style={{ position: "absolute", left: 0, top: 0 }}>
       {/* deck stack */}
@@ -247,10 +353,10 @@ function DeckAndDiscard({
         onClick={deckTop ? onDeckClick : undefined}
         style={{
           position: "absolute",
-          left: -36,
-          top: -36,
-          width: 56 + (deckLayers - 1) * 1.5,
-          height: Math.round(56 * 1.45) + (deckLayers - 1) * 1.5,
+          left: deckLeft,
+          top: pileTop,
+          width: pileW + (deckLayers - 1) * 1.5,
+          height: Math.round(pileW * 1.45) + (deckLayers - 1) * 1.5,
           cursor: deckTop ? "pointer" : "default",
         }}
       >
@@ -264,25 +370,25 @@ function DeckAndDiscard({
               left: -(i + 1) * 1.5,
             }}
           >
-            <CardBack width={56} />
+            <CardBack width={pileW} />
           </div>
         ))}
         {/* topmost card — flips on click if there is a known top */}
         <div style={{ position: "absolute", top: 0, left: 0 }}>
           {deckTop ? (
             <FlipCard
-              width={56}
+              width={pileW}
               flipped={deckRevealed}
-              back={<CardBack width={56} />}
-              face={<CardFace width={56} rank={deckTop.rank} suit={deckTop.suit} />}
+              back={<CardBack width={pileW} />}
+              face={<CardFace width={pileW} rank={deckTop.rank} suit={deckTop.suit} />}
             />
           ) : (
-            <CardBack width={56} />
+            <CardBack width={pileW} />
           )}
         </div>
       </div>
       {/* discard pile (top card always shown face-up; empty slot if pile is empty) */}
-      <div style={{ position: "absolute", left: 36, top: -36 }}>
+      <div style={{ position: "absolute", left: discardLeft, top: pileTop }}>
         <AnimatePresence mode="popLayout">
           {top ? (
             <motion.div
@@ -297,14 +403,14 @@ function DeckAndDiscard({
                   "drop-shadow(0 0 12px color-mix(in oklab, #d4a64a 30%, transparent))",
               }}
             >
-              <CardFace width={56} rank={top.rank} suit={top.suit} />
+              <CardFace width={pileW} rank={top.rank} suit={top.suit} />
             </motion.div>
           ) : (
             <motion.div
               key="empty"
               style={{
-                width: 56,
-                height: Math.round(56 * 1.45),
+                width: pileW,
+                height: Math.round(pileW * 1.45),
                 borderRadius: 8,
                 border: "1px dashed color-mix(in oklab, #d4a64a 35%, transparent)",
               }}
@@ -312,46 +418,51 @@ function DeckAndDiscard({
           )}
         </AnimatePresence>
       </div>
-      {/* sub-labels */}
-      <div
-        style={{
-          position: "absolute",
-          left: -36 + 28,
-          top: 60,
-          transform: "translate(-50%, 0)",
-          fontFamily: "Cinzel, serif",
-          letterSpacing: "0.32em",
-          fontSize: 9,
-          color: "#ecd596",
-          opacity: 0.6,
-        }}
-      >
-        DECK
-      </div>
-      <div
-        style={{
-          position: "absolute",
-          left: 36 + 28,
-          top: 60,
-          transform: "translate(-50%, 0)",
-          fontFamily: "Cinzel, serif",
-          letterSpacing: "0.32em",
-          fontSize: 9,
-          color: "#ecd596",
-          opacity: 0.6,
-        }}
-      >
-        DISCARD
-      </div>
+      {preset.showPileLabels && (
+        <>
+          <div
+            style={{
+              position: "absolute",
+              left: deckLeft + subLabelPad,
+              top: subLabelTop,
+              transform: "translate(-50%, 0)",
+              fontFamily: "Cinzel, serif",
+              letterSpacing: "0.32em",
+              fontSize: subLabelFontSize,
+              color: "#ecd596",
+              opacity: 0.6,
+            }}
+          >
+            DECK
+          </div>
+          <div
+            style={{
+              position: "absolute",
+              left: discardLeft + subLabelPad,
+              top: subLabelTop,
+              transform: "translate(-50%, 0)",
+              fontFamily: "Cinzel, serif",
+              letterSpacing: "0.32em",
+              fontSize: subLabelFontSize,
+              color: "#ecd596",
+              opacity: 0.6,
+            }}
+          >
+            DISCARD
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
-function HeldCard({ board }: { board: BoardState }) {
-  if (!board.heldCard || !board.activeSeat) return null;
-  const cfg = SEAT_LAYOUT[board.activeSeat];
-  const cx = cfg.center.x * 0.55;
-  const cy = cfg.center.y * 0.55;
+function HeldCard({ board, preset }: { board: BoardState; preset: LayoutPreset }) {
+  if (!board.heldCard || !board.activeSeat || !preset.showHeld) return null;
+  const cfg = preset.layout[board.activeSeat];
+  const cx = cfg.center.x * preset.heldFactor;
+  const cy = cfg.center.y * preset.heldFactor;
+  const w = preset.heldW;
+  const h = Math.round(w * 1.45);
   return (
     <motion.div
       key={`held-${board.heldCard.rank}-${board.heldCard.suit}`}
@@ -360,18 +471,21 @@ function HeldCard({ board }: { board: BoardState }) {
       transition={{ duration: 0.3 }}
       style={{
         position: "absolute",
-        left: cx - 30,
-        top: cy - 44,
+        left: cx - w / 2,
+        top: cy - h / 2,
+        zIndex: 5,
         filter:
           "drop-shadow(0 0 14px color-mix(in oklab, #d4a64a 50%, transparent))",
       }}
     >
-      <CardFace width={60} rank={board.heldCard.rank} suit={board.heldCard.suit} />
+      <CardFace width={w} rank={board.heldCard.rank} suit={board.heldCard.suit} />
     </motion.div>
   );
 }
 
 export default function WalkThrough() {
+  const isMobile = useIsMobile();
+  const preset = isMobile ? MOBILE_PRESET : DESKTOP_PRESET;
   const [step, setStep] = useState(0);
   const [userRevealed, setUserRevealed] = useState<Set<string>>(new Set());
   const [deckRevealed, setDeckRevealed] = useState(false);
@@ -435,13 +549,19 @@ export default function WalkThrough() {
   );
 
   return (
-    <div style={{ width: "100%", maxWidth: 980, margin: "0 auto" }}>
+    <div
+      style={{
+        width: "100%",
+        maxWidth: 980,
+        margin: "0 auto",
+      }}
+    >
       <div
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 12,
-          marginBottom: 18,
+          gap: isMobile ? 8 : 12,
+          marginBottom: isMobile ? 12 : 18,
           flexWrap: "wrap",
         }}
       >
@@ -450,7 +570,7 @@ export default function WalkThrough() {
             fontFamily: "Cinzel, serif",
             color: "#ecd596",
             letterSpacing: "0.22em",
-            fontSize: 11,
+            fontSize: isMobile ? 10 : 11,
             opacity: 0.7,
             whiteSpace: "nowrap",
           }}
@@ -469,11 +589,11 @@ export default function WalkThrough() {
           style={{
             fontFamily: "Cinzel, serif",
             letterSpacing: "0.18em",
-            fontSize: 11,
+            fontSize: isMobile ? 10 : 11,
             color: "#ecd596",
             background: "transparent",
             border: "1px solid color-mix(in oklab, #d4a64a 50%, transparent)",
-            padding: "6px 14px",
+            padding: isMobile ? "5px 10px" : "6px 14px",
             borderRadius: 4,
             cursor: "pointer",
           }}
@@ -489,12 +609,12 @@ export default function WalkThrough() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.3 }}
-          style={{ marginBottom: 22 }}
+          style={{ marginBottom: isMobile ? 14 : 22 }}
         >
           <div
             style={{
               color: "#f4ede1",
-              fontSize: "1.25rem",
+              fontSize: preset.captionFontSize,
               lineHeight: 1.5,
             }}
           >
@@ -503,10 +623,10 @@ export default function WalkThrough() {
           {current.reasoning && (
             <div
               style={{
-                marginTop: "1rem",
+                marginTop: isMobile ? "0.6rem" : "1rem",
                 color: "color-mix(in oklab, #f4ede1 80%, transparent)",
-                fontSize: "0.98rem",
-                lineHeight: 1.65,
+                fontSize: preset.reasoningFontSize,
+                lineHeight: 1.6,
               }}
             >
               {current.reasoning}
@@ -517,7 +637,7 @@ export default function WalkThrough() {
 
       <div
         className="scene-fitter"
-        style={{ "--scene-w": 720, "--scene-h": 760 } as Record<string, string | number>}
+        style={{ "--scene-w": preset.scene.w, "--scene-h": preset.scene.h } as Record<string, string | number>}
       >
       <div
         className="scene"
@@ -543,11 +663,12 @@ export default function WalkThrough() {
             height: 0,
           }}
         >
-          <DeckAndDiscard board={board} deckRevealed={deckRevealed} onDeckClick={onDeckClick} />
-          {(Object.keys(SEAT_LAYOUT) as SeatId[]).map((seat) => (
+          <DeckAndDiscard board={board} deckRevealed={deckRevealed} onDeckClick={onDeckClick} preset={preset} />
+          {(Object.keys(preset.layout) as SeatId[]).map((seat) => (
             <SeatGrid
               key={seat}
               seat={seat}
+              cfg={preset.layout[seat]}
               state={board.seats[seat]}
               revealedSlots={revealedSlots}
               userRevealedSlots={userRevealed}
@@ -556,13 +677,15 @@ export default function WalkThrough() {
               onCardClick={onCardClick}
             />
           ))}
-          <HeldCard board={board} />
-          {(Object.keys(SEAT_LAYOUT) as SeatId[]).map((seat) => (
+          <HeldCard board={board} preset={preset} />
+          {(Object.keys(preset.layout) as SeatId[]).map((seat) => (
             <SeatLabel
               key={`label-${seat}`}
               seat={seat}
+              cfg={preset.layout[seat]}
               active={board.activeSeat === seat}
               score={board.showScores ? totalOf(board.seats[seat]) : null}
+              preset={preset}
             />
           ))}
         </div>
@@ -573,7 +696,7 @@ export default function WalkThrough() {
         style={{
           display: "flex",
           gap: 12,
-          marginTop: 18,
+          marginTop: isMobile ? 12 : 18,
           justifyContent: "space-between",
           alignItems: "center",
         }}
@@ -591,9 +714,11 @@ export default function WalkThrough() {
                 : "#ecd596",
             background: "transparent",
             border: "1px solid color-mix(in oklab, #d4a64a 50%, transparent)",
-            padding: "10px 22px",
+            padding: isMobile ? "12px 0" : "10px 22px",
             borderRadius: 4,
             cursor: step === 0 ? "default" : "pointer",
+            flex: isMobile ? 1 : "none",
+            minHeight: 44,
           }}
         >
           ← PREV
@@ -612,9 +737,11 @@ export default function WalkThrough() {
             background:
               step === total - 1 ? "transparent" : "#d4a64a",
             border: "1px solid color-mix(in oklab, #d4a64a 50%, transparent)",
-            padding: "10px 22px",
+            padding: isMobile ? "12px 0" : "10px 22px",
             borderRadius: 4,
             cursor: step === total - 1 ? "default" : "pointer",
+            flex: isMobile ? 1 : "none",
+            minHeight: 44,
           }}
         >
           NEXT →

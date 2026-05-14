@@ -38,13 +38,13 @@ const values: Array<{
 ---
 
 <Base title="Cambio — Full rules">
-  <div class="max-w-6xl mx-auto px-6 pt-20 pb-10">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-10 sm:pt-20 pb-7 sm:pb-10">
     <div class="eyebrow filigree">The rules</div>
-    <h1 class="font-display text-5xl sm:text-6xl text-[var(--color-gold-50)] mt-4 leading-tight">How to play Cambio</h1>
+    <h1 class="font-display text-4xl sm:text-6xl text-[var(--color-gold-50)] mt-3 sm:mt-4 leading-tight">How to play Cambio</h1>
 
   </div>
 
-  <div class="max-w-6xl mx-auto px-6 grid lg:grid-cols-[220px_1fr] gap-12">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 grid lg:grid-cols-[220px_1fr] gap-8 lg:gap-12">
     <aside class="hidden lg:block"><Toc items={toc} /></aside>
 
     <article>
@@ -136,7 +136,7 @@ const values: Array<{
 
       <style>
         .setup-fitter {
-          margin: 3rem auto 1.5rem;
+          margin: 2rem auto 1rem;
         }
         .setup-table {
           display: grid;
@@ -185,6 +185,16 @@ const values: Array<{
         .deck { position: relative; width: 68px; height: 96px; margin: 0 auto; }
         .deck-card { position: absolute; }
 
+        @media (max-width: 639px) {
+          .setup-fitter {
+            margin: 1.5rem auto 0.75rem;
+          }
+
+          .setup-table {
+            padding: 0.5rem;
+          }
+        }
+
       </style>
 
       <Section id="opening" eyebrow="The single permitted glance" title="Opening peek">
@@ -204,14 +214,14 @@ const values: Array<{
           you put one of those five face-up on the discard pile, leaving four cards in your grid
           for the next player. The turn breaks into three actions:
         </p>
-        <div class="not-prose grid sm:grid-cols-3 gap-5 my-6">
+        <div class="not-prose grid sm:grid-cols-3 gap-3 sm:gap-5 my-5 sm:my-6">
           {[
             { n: "1", t: "Draw", b: "Take the top card of the deck and look at it." },
             { n: "2", t: "Decide", b: "Either keep the new card (swap it into your grid; the card you displace becomes your discard candidate) or don't (the card you just drew is the candidate)." },
             { n: "3", t: "Discard", b: "Place your candidate face-up on the discard pile. If it's a power card (7, 8, 9, 10, J, Q, K), its effect fires now." },
           ].map((o) => (
             <div
-              class="rounded-xl p-5"
+              class="rounded-xl p-4 sm:p-5"
               style="background: color-mix(in oklab, var(--color-felt-700) 35%, transparent); border:1px solid color-mix(in oklab, var(--color-gold-400) 22%, transparent);"
             >
               <div class="font-display text-[var(--color-gold-400)] text-2xl mb-1">{o.n}</div>
@@ -262,7 +272,7 @@ const values: Array<{
           to the discard pile via a <a href="#snap">snap</a> have <strong>no effect</strong>.
         </p>
 
-        <div class="not-prose space-y-5 my-8">
+        <div class="not-prose space-y-4 sm:space-y-5 my-6 sm:my-8">
           <RuleCard title="Seven or Eight" rank="7" suit="diamonds" rankAlt="8" suitAlt="clubs" value="See your fate" tagline="Seven or eight — see your fate.">
             Look at one card from <strong>your own</strong> grid. Pick a face-down card,
             peek at it privately, and return it.

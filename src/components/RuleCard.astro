@@ -12,7 +12,7 @@ interface Props {
 const { title, rank, suit = "spades", rankAlt, suitAlt, value, tagline } = Astro.props;
 ---
 <div
-  class="not-prose rounded-xl p-6 flex gap-6 items-start"
+  class="not-prose rounded-xl p-4 sm:p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 items-start"
   style="background: linear-gradient(180deg, color-mix(in oklab, var(--color-felt-700) 60%, transparent), color-mix(in oklab, var(--color-felt-900) 70%, transparent)); border:1px solid color-mix(in oklab, var(--color-gold-400) 25%, transparent); box-shadow: 0 20px 40px -30px rgba(0,0,0,0.8) inset;"
 >
   <div class="flex gap-2 shrink-0">
@@ -20,12 +20,12 @@ const { title, rank, suit = "spades", rankAlt, suitAlt, value, tagline } = Astro
     {rankAlt && <Card rank={rankAlt} suit={suitAlt ?? "hearts"} size="sm" tilt={false} rotate={6} />}
   </div>
   <div class="min-w-0">
-    <div class="flex items-baseline gap-3 mb-1 flex-wrap">
-      <h3 class="font-display text-[var(--color-gold-50)] text-xl m-0">{title}</h3>
+    <div class="flex items-baseline gap-2 sm:gap-3 mb-1 flex-wrap">
+      <h3 class="font-display text-[var(--color-gold-50)] text-lg sm:text-xl m-0">{title}</h3>
       {value && <span class="text-xs eyebrow">{value}</span>}
     </div>
     {tagline && <div class="text-[var(--color-gold-200)] italic mb-2 text-sm">{tagline}</div>}
-    <div class="text-[var(--color-ivory)] leading-relaxed text-[0.98rem]">
+    <div class="text-[var(--color-ivory)] leading-relaxed text-[0.94rem] sm:text-[0.98rem]">
       <slot />
     </div>
   </div>

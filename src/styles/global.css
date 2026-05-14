@@ -92,6 +92,26 @@ body::before {
 }
 .filigree::after { background: linear-gradient(to left, transparent, var(--color-gold-400)); }
 
+@media (max-width: 639px) {
+  .eyebrow {
+    letter-spacing: 0.26em;
+    font-size: 0.66rem;
+  }
+
+  .filigree::before, .filigree::after {
+    width: 2.25rem;
+    margin: 0 0.55rem;
+  }
+
+  .prose-cambio {
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .prose-cambio p { margin-bottom: 0.875rem; }
+  .prose-cambio ul, .prose-cambio ol { margin-left: 1rem; }
+}
+
 a { color: var(--color-gold-200); }
 a:hover { color: var(--color-gold-50); }
 

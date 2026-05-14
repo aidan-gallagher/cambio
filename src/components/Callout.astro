@@ -41,13 +41,13 @@ const s = styles[variant];
 ---
 
 <aside
-  class="my-6 rounded-lg p-5 not-prose"
+  class="my-5 sm:my-6 rounded-lg p-4 sm:p-5 not-prose"
   style={`background:${s.bg};border:1px solid ${s.border};`}
 >
   <div class="flex items-baseline gap-3 mb-2">
     <span class="font-display text-[var(--color-gold-200)] tracking-[0.2em] text-xs">{s.icon}&nbsp;&nbsp;{(title ?? s.label).toUpperCase()}</span>
   </div>
-  <div class="text-[var(--color-ivory)] leading-relaxed text-[0.98rem]">
+  <div class="text-[var(--color-ivory)] leading-relaxed text-[0.94rem] sm:text-[0.98rem]">
     <slot />
   </div>
 </aside>

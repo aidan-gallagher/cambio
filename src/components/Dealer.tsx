@@ -109,7 +109,7 @@ export default function Dealer() {
   return (
     <div
       className="scene-fitter"
-      style={{ "--scene-w": 380, "--scene-h": 420 } as Record<string, string | number>}
+      style={{ "--scene-w": 500, "--scene-h": 540 } as Record<string, string | number>}
     >
     <div
       className="scene"

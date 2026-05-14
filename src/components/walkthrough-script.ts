@@ -191,7 +191,7 @@ export const STEPS: Step[] = (() => {
   out.push({
     caption: "Sam's turn. He draws an 8♦.",
     reasoning:
-      "Sam already knows two of his cards sum to only 7 (A♥ + 6♦), with TL and TR still unknown. The 8 he just drew is heavier than an average unknown — and 8 is a power card. Discarding it directly trades zero score for a free private peek.",
+      "Sam already knows two of his cards sum to only 7 (A♥ + 6♦), with his top-left (TL) and top-right (TR) still unknown. The 8 he just drew is heavier than an average unknown — and 8 is a power card. Discarding it directly trades zero score for a free private peek.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,

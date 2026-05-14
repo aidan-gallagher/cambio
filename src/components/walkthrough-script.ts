@@ -268,9 +268,7 @@ export const STEPS: Step[] = (() => {
   // 7 — Bob draws 5♥
   deck--;
   out.push({
-    caption: "Bob's turn. He draws a 5♥.",
-    reasoning:
-      "5 isn't a power card. He swaps into an unknown TL — positive EV either way.",
+    caption: "Bob's turn. He draws a 5♥. He swaps it into his unknown TL.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,

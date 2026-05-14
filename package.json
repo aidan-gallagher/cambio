@@ -13,6 +13,7 @@
     "@astrojs/cloudflare": "^12.5.0",
     "@astrojs/mdx": "^4.2.6",
     "@astrojs/react": "^4.3.0",
+    "@astrojs/sitemap": "^3.7.2",
     "@tailwindcss/vite": "^4.1.7",
     "astro": "^5.8.0",
     "motion": "^12.12.1",

@@ -1,6 +1,7 @@
 ---
 import Base from "~/layouts/Base.astro";
 import WalkThrough from "~/components/WalkThrough.tsx";
+import { STEPS } from "~/components/walkthrough-script";
 ---
 
 <Base
@@ -25,6 +26,17 @@ import WalkThrough from "~/components/WalkThrough.tsx";
   </div>
 
   <div class="max-w-6xl mx-auto px-4 sm:px-6 pb-24">
-    <WalkThrough client:load />
+    <WalkThrough client:visible />
+    <section class="sr-only" aria-label="Text version of the Cambio example walkthrough">
+      <h2>Cambio example walkthrough steps</h2>
+      <ol>
+        {STEPS.map((step) => (
+          <li>
+            <p>{step.caption}</p>
+            {step.reasoning && <p>{step.reasoning}</p>}
+          </li>
+        ))}
+      </ol>
+    </section>
   </div>
 </Base>

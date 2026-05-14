@@ -1,0 +1,16 @@
+{
+  "name": "Cambio",
+  "short_name": "Cambio",
+  "description": "Learn the rules, strategy, and history of the Cambio card game.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b1410",
+  "theme_color": "#0b1410",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

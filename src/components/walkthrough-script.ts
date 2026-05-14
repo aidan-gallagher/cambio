@@ -97,7 +97,8 @@ const INITIAL: Record<SeatId, Slot[]> = {
   east:  [c("7", "clubs"),     c("7", "diamonds"),  c("2", "diamonds"),  c("J", "hearts")],
 };
 
-const INITIAL_DECK_COUNT = 36;
+// 54 cards (52 + 2 jokers) minus 16 dealt = 38 in the deck before play.
+const INITIAL_DECK_COUNT = 38;
 
 function board(
   grids: Record<SeatId, Slot[]>,
@@ -190,7 +191,7 @@ export const STEPS: Step[] = (() => {
   out.push({
     caption: "Sam's turn. He draws an 8♦.",
     reasoning:
-      "Sam already knows three of his cards add up to only 7 (the unknown TL plus A♥ + 6♦). The 8 he just drew is heavier than an average unknown — and 8 is a power card. Discarding it directly trades zero score for a free private peek.",
+      "Sam already knows two of his cards sum to only 7 (A♥ + 6♦), with TL and TR still unknown. The 8 he just drew is heavier than an average unknown — and 8 is a power card. Discarding it directly trades zero score for a free private peek.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -285,7 +286,7 @@ export const STEPS: Step[] = (() => {
   out.push({
     caption: "Bob swaps the 5♥ into his top-left. The displaced 10♠ activates — \"spy again\" — and Bob peeks Alice's top-left → 7♣.",
     reasoning:
-      "The gamble pays off: the unknown was a 10♠ (−5 score) AND a power card (free spy). Bob now knows his whole grid except TR — 5♥, 5♠, 10 dumped, plus a private read on Alice's TL. His total is 16 with one unknown.",
+      "The gamble pays off: the unknown was a 10♠ (−5 score) AND a power card (free spy). Bob now knows two of his three cards (TL 5♥, BL 5♠) summing to 10, with TR still unknown — plus a private read on Alice's TL.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -325,6 +326,8 @@ export const STEPS: Step[] = (() => {
       activeSeat: "east",
       heldCard: c("K", "clubs"),
       deckTop: c("2", "clubs"),
+      // Lisa's BL is still publicly exposed from the failed snap.
+      revealedSlots: ["west-2"],
     }),
   });
 
@@ -332,9 +335,9 @@ export const STEPS: Step[] = (() => {
   pile = [...pile, c("K", "clubs")];
   grids = swapSlots(grids, { seat: "east", index: 3 }, { seat: "west", index: 2 });
   out.push({
-    caption: "Alice discards the K♣ — peek-and-fling. She peeks her own TR (7♦, clearing her last unknown) and then swaps her BR (J♥) with Lisa's exposed BL (3♠). Alice −7, Lisa +7.",
+    caption: "Alice discards the K♣ — peek-and-fling. She peeks her own TR (7♦) and then swaps her BR (J♥) with Lisa's exposed BL (3♠). Alice −7, Lisa +7.",
     reasoning:
-      "Peek-and-fling resolves as two independent effects. The peek goes to her own remaining unknown — she now sees her whole side. The swap targets the lowest publicly-known card on the table. The 3♠ moves face-up into Alice's BR; the J♥ slides face-down into Lisa's BL. Lisa, having seen Alice's BR was a J back in step 5, can now deduce her new BL is that J — if she's paying attention.",
+      "Peek-and-fling resolves as two independent effects. Alice picks the peek on her TR (one of her two remaining unknowns — she still doesn't know TL). The swap targets the lowest publicly-known card on the table. The 3♠ moves face-up into Alice's BR; the J♥ slides face-down into Lisa's BL. Lisa, having seen Alice's BR was a J back in step 5, can now deduce her new BL is that J — if she's paying attention.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
@@ -349,12 +352,14 @@ export const STEPS: Step[] = (() => {
   out.push({
     caption: "Sam's turn 2. Instead of drawing, he calls CAMBIO.",
     reasoning:
-      "Sam has 3 of 4 cards known: 4 + 1 + 6 = 11 plus an unknown TR. Even pessimistically that's ~17. By his read of the table — Lisa's five-card grid stuffed with unknowns, Bob's recent +5 swap then snap leaving him around 16, Alice having just absorbed a J — he's almost certainly the deepest in the basement. He locks it in.",
+      "Sam has 3 of 4 cards known: 4 + 1 + 6 = 11 plus an unknown TR — call it ~17 on the average, 21 in the worst case. Table read: Lisa is sitting on five cards including a face-down penalty and an unknown she just absorbed from Alice (Alice burned a King to dump it, so it's almost certainly heavy). Bob snapped a 10, then swapped a drawn card into TL displacing another 10 — he's down to three cards but two of them are still unknowns. Alice unloaded her J onto Lisa but still carries unknowns of her own. Sam's known-low is the safest hand on the table; he locks it in before anyone else can grind theirs down further.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
       activeSeat: "you",
       deckTop: c("2", "clubs"),
+      // Alice's BR now holds the exposed 3♠ that came from Lisa's BL.
+      revealedSlots: ["east-3"],
     }),
   });
 
@@ -390,7 +395,8 @@ export const STEPS: Step[] = (() => {
       discard: pile,
       activeSeat: "north",
       deckTop: c("4", "clubs"),
-      revealedSlots: ["north-1"],
+      // Lisa's TL now publicly holds the 3♠ from her swap-unseen.
+      revealedSlots: ["north-1", "west-0"],
       highlights: ["north-1"],
     }),
   });
@@ -401,14 +407,15 @@ export const STEPS: Step[] = (() => {
   grids = withSlot(grids, "east", 1, c("4", "clubs"));
   pile = [...pile, c("7", "diamonds")];
   out.push({
-    caption: "Alice's final turn. She draws a 4♣ and swaps it into her TR (known 7♦). The displaced 7 fires see-your-fate; she peeks her last unknown (TL → 7♣).",
+    caption: "Alice's final turn. She draws a 4♣ and swaps it into her TR (known 7♦). The displaced 7 fires see-your-fate; she peeks her TL → 7♣.",
     reasoning:
-      "TR was her highest known card, so the swap is a deterministic −3. The 7's effect lets her clear her last unknown for closure — she now sees her whole side. Final: 7 + 4 + 2 + 10 = 23.",
+      "TR was Alice's only known high card, so swapping the 4 in is a deterministic −3. She still has one unknown (her BR — whatever Lisa just dumped on her via swap-unseen), but no fourth action can do anything about it. The 7's see-your-fate is purely informational; she peeks TL for closure. Final: 7 + 4 + 2 + Q♠ = 23.",
     board: board(grids, {
       deckCount: deck,
       discard: pile,
       activeSeat: "east",
-      revealedSlots: ["east-0"],
+      // Lisa's TL still publicly shows the 3♠.
+      revealedSlots: ["east-0", "west-0"],
       highlights: ["east-0", "east-1"],
     }),
   });
